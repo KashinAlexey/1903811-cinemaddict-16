@@ -1,7 +1,13 @@
-export const createSortTemplate = () => (`<!-- Сортировка -->
-  <ul class="sort">
-    <li><a href="#" class="sort__button sort__button--active">Sort by default</a></li>
-    <li><a href="#" class="sort__button">Sort by date</a></li>
-    <li><a href="#" class="sort__button">Sort by rating</a></li>
+import { SORTS } from '../constants.js';
+
+export const createSortTemplate = () => (
+  `<ul class="sort">
+    ${SORTS.map((sort) => `<li>
+    <a href="#"
+      class="sort__button
+      sort__button--active">
+      ${sort}
+    </a>
+    </li>`).join('')}
   </ul>`
 );

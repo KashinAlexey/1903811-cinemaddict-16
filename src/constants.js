@@ -8,4 +8,7 @@ const RenderPosition = {
 const FILM_COUNT = 5;
 const EXTRA_FILM_COUNT = 2;
 
-export { RenderPosition, FILM_COUNT, EXTRA_FILM_COUNT };
+const FILTERS = ['watchlist', 'history', 'favorites'];
+const SORTS = ['Sort by default', 'Sort by date', 'Sort by rating'];
+
+export { RenderPosition, FILM_COUNT, EXTRA_FILM_COUNT, FILTERS, SORTS };

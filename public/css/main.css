@@ -469,7 +469,7 @@ button {
   background-size: 14px 10px;
 }
 
-.film-card__controls-item--favorite {
+.film-card__controls-item--mark-as-favorite {
   background-image: url('../images/icons/icon-favorite.svg');
   background-size: 18px 18px;
 }

@@ -7,8 +7,9 @@ import { createFilmsTemplate } from './views/films-view.js';
 import { createFilmListTemplate } from './views/films-list-view.js';
 import { createShowMoreButtonTemplate } from './views/show-more-button-view.js';
 import { createFilmCardTemplate } from './views/film-card-view.js';
-import { createStatisticsTemplate } from './views/statistics-view.js';
+import { createFooterStatisticsTemplate } from './views/footer-statistics-view.js';
 //import { createFilmDetailsTemplate } from './views/film-details-view.js';
+//import { createStatisticTemplate } from './views/statistic-view.js';
 
 //const siteBodyElement = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');
@@ -17,10 +18,13 @@ const siteFooterElement = document.querySelector('.footer');
 
 renderTemplate(siteHeaderElement, createHeaderProfileTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createMainNavigationTemplate(), RenderPosition.BEFOREEND);
+
+//renderTemplate(siteMainElement, createStatisticTemplate(), RenderPosition.BEFOREEND);
+
 renderTemplate(siteMainElement, createSortTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createFilmsTemplate(), RenderPosition.BEFOREEND);
 
-renderTemplate(siteFooterElement, createStatisticsTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteFooterElement, createFooterStatisticsTemplate(), RenderPosition.BEFOREEND);
 
 const filmsElement = siteMainElement.querySelector('.films');
 
