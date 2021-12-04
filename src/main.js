@@ -1,25 +1,26 @@
 import { renderTemplate } from './util.js';
 import { RenderPosition, FILM_COUNT, EXTRA_FILM_COUNT } from './constants.js';
-import { createMenuTemplate } from './views/profile-view.js';
-import { createNavigationTemplate } from './views/navigation-view.js';
+import { createHeaderProfileTemplate } from './views/header-profile-view.js';
+import { createMainNavigationTemplate } from './views/navigation-view.js';
 import { createSortTemplate } from './views/sort-view.js';
-import { createFilmsTemplate } from './films-view.js';
-import { createFilmListTemplate } from './views/film-list-view.js';
+import { createFilmsTemplate } from './views/films-view.js';
+import { createFilmListTemplate } from './views/films-list-view.js';
 import { createShowMoreButtonTemplate } from './views/show-more-button-view.js';
 import { createFilmCardTemplate } from './views/film-card-view.js';
 import { createStatisticsTemplate } from './views/statistics-view.js';
+//import { createFilmDetailsTemplate } from './views/film-details-view.js';
 
+//const siteBodyElement = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');
 const siteMainElement = document.querySelector('.main');
 const siteFooterElement = document.querySelector('.footer');
 
-renderTemplate(siteHeaderElement, createMenuTemplate(), RenderPosition.BEFOREEND);
-renderTemplate(siteMainElement, createNavigationTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteHeaderElement, createHeaderProfileTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteMainElement, createMainNavigationTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createSortTemplate(), RenderPosition.BEFOREEND);
 renderTemplate(siteMainElement, createFilmsTemplate(), RenderPosition.BEFOREEND);
 
-const footerStatisticsElement = siteFooterElement.querySelector('.footer__statistics');
-renderTemplate(footerStatisticsElement, createStatisticsTemplate(), RenderPosition.BEFOREEND);
+renderTemplate(siteFooterElement, createStatisticsTemplate(), RenderPosition.BEFOREEND);
 
 const filmsElement = siteMainElement.querySelector('.films');
 
@@ -57,3 +58,5 @@ for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
 for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
   renderTemplate(mostCommentedFilmListContainerElement, createFilmCardTemplate(), RenderPosition.BEFOREEND);
 }
+
+//renderTemplate(siteBodyElement, createFilmDetailsTemplate(), RenderPosition.BEFOREEND);

@@ -1,5 +1,5 @@
-export const createFilmCardTemplate = () => (`<!-- Карточка фильма -->
-  <article class="film-card">
+export const createFilmCardTemplate = () => (
+  `<article class="film-card">
     <a class="film-card__link">
       <h3 class="film-card__title">The Dance of Life</h3>
       <p class="film-card__rating">8.3</p>
