@@ -10,6 +10,13 @@ import { createFilmCardTemplate } from './views/film-card-view.js';
 import { createFooterStatisticsTemplate } from './views/footer-statistics-view.js';
 //import { createFilmDetailsTemplate } from './views/film-details-view.js';
 //import { createStatisticTemplate } from './views/statistic-view.js';
+import { AUTHORIZATION } from './constants.js';
+import { END_POINT } from './constants.js';
+import ApiService from './api-service.js';
+import DataModel from './model/data-model.js';
+
+const dataModel = new DataModel(new ApiService(END_POINT, AUTHORIZATION));
+dataModel.init();
 
 //const siteBodyElement = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');

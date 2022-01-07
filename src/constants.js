@@ -5,6 +5,16 @@ const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
+export const AUTHORIZATION = 'Basic pouigwdbbhvwv9653';
+export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
+
+export const Method = {
+  GET: 'GET',
+  PUT: 'PUT',
+  POST: 'POST',
+  DELETE: 'DELETE',
+};
+
 const FILM_COUNT = 5;
 const EXTRA_FILM_COUNT = 2;
 
