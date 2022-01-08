@@ -1,4 +1,6 @@
-export const createFilmListTemplate = () => (
+import AbstractView from './abstract-view.js';
+
+const createFilmListTemplate = () => (
   `<section class="films-list">
     <h2 class="films-list__title visually-hidden">
       All movies. Upcoming
@@ -6,6 +8,12 @@ export const createFilmListTemplate = () => (
     <div class="films-list__container"></div>
   </section>`
 );
+
+export default class FilmsListView extends AbstractView {
+  get template() {
+    return createFilmListTemplate();
+  }
+}
 
 // <!--
 //     При загрузке данных

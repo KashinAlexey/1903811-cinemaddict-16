@@ -1,3 +1,5 @@
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+
 const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
@@ -34,5 +36,22 @@ const EXTRA_FILM_COUNT = 2;
 
 const FILTERS = ['watchlist', 'history', 'favorites'];
 const SORTS = ['Sort by default', 'Sort by date', 'Sort by rating'];
+
+export const MenuItem = {
+  ALL: 'All movies',
+  STATS: 'Stats',
+};
+
+export const FilterType = {
+  WATCHLIST: 'Watchlist',
+  HISTORY: 'History',
+  FAVORITES: 'Favorites',
+};
+
+export const SortType = {
+  DEFAULT: 'default',
+  DATE: 'date',
+  RATING: 'rating',
+};
 
 export { RenderPosition, FILM_COUNT, EXTRA_FILM_COUNT, FILTERS, SORTS };
