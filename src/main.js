@@ -12,11 +12,15 @@ import { createFooterStatisticsTemplate } from './views/footer-statistics-view.j
 //import { createStatisticTemplate } from './views/statistic-view.js';
 import { AUTHORIZATION } from './constants.js';
 import { END_POINT } from './constants.js';
-import ApiService from './api-service.js';
+import ApiService from './service/api-service.js';
 import DataModel from './model/data-model.js';
 
+import MainPresenter from './presenter/main-presenter.js';
+
 const dataModel = new DataModel(new ApiService(END_POINT, AUTHORIZATION));
+const mainPresenter = new MainPresenter(dataModel);
 dataModel.init();
+mainPresenter.init();
 
 //const siteBodyElement = document.querySelector('body');
 const siteHeaderElement = document.querySelector('.header');
@@ -71,3 +75,5 @@ for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
 }
 
 //renderTemplate(siteBodyElement, createFilmDetailsTemplate(), RenderPosition.BEFOREEND);
+
+

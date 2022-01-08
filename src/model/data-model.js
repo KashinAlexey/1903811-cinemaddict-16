@@ -1,11 +1,13 @@
 import AbstractObservable from '../utils/abstract-observable.js';
-import { Method } from '../constants.js';
-import { adaptToClient } from './adapters.js';
+import { adaptToClient } from '../service/adapter-client.js';
+import { adaptToServer } from '../service/adapter-server.js';
+import { DataEvent, Url } from '../constants.js';
 
 export default class DataModel extends AbstractObservable {
   #films = [];
   #apiService = null;
   #adaptToClient = adaptToClient;
+  #adaptToServer = adaptToServer;
 
   constructor(apiService) {
     super();
@@ -18,24 +20,20 @@ export default class DataModel extends AbstractObservable {
 
   init = async () => {
     try {
-      const films = await this.#apiService.films;
+      const films = await this.#apiService.getData(Url.MOVIES);
       this.#films = films.map(this.#adaptToClient);
+      this._notify(DataEvent.INIT);
     } catch(err) {
-      this.#films = [];
+      this._notify(DataEvent.ERROR);
     }
-
-    this._notify(Method.GET);
   }
 
-  updateTask = () => {
-    this._notify(Method.PUT);
-  }
-
-  addTask = () => {
-    this._notify(Method.POST);
-  }
-
-  deleteTask = () =>{
-    this._notify(Method.DELETE);
+  getComments = async (id) => {
+    try {
+      const comments = await this.#apiService.getData(Url.COMMENTS, id);
+      this._notify(DataEvent.GETED, comments);
+    } catch(err) {
+      this._notify(DataEvent.ERROR);
+    }
   }
 }

@@ -6,13 +6,27 @@ const RenderPosition = {
 };
 
 export const AUTHORIZATION = 'Basic pouigwdbbhvwv9653';
-export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict/';
+export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict';
 
-export const Method = {
-  GET: 'GET',
-  PUT: 'PUT',
-  POST: 'POST',
-  DELETE: 'DELETE',
+export const Url = {
+  MOVIES: 'movies',
+  COMMENTS: 'comments',
+};
+
+export const UserAction = {
+  GET_DATA: 'GET_DATA',
+  UPDATE_DATA: 'UPDATE_DATA',
+  ADD_DATA: 'ADD_DATA',
+  DELETE_DATA: 'DELETE_DATA',
+};
+
+export const DataEvent = {
+  INIT: 'INIT',
+  GETED: 'GETED',
+  ADDED: 'ADDED',
+  UPDATED: 'UPDATED',
+  DELETED: 'DELETED',
+  ERROR: 'ERROR',
 };
 
 const FILM_COUNT = 5;
