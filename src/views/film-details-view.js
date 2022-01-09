@@ -1,3 +1,4 @@
+import AbstractView from './abstract-view.js';
 //const FILM_DETAILS_ROWS = ['Director', 'Writers', 'Actors', 'Release Date', 'Runtime', 'Country', 'Genres'];
 
 const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
@@ -81,7 +82,7 @@ const createFilmDetailsEmojiItem = () => (
   </label>`).join('')
 );
 
-export const createFilmDetailsTemplate = () => (
+const createFilmDetailsTemplate = () => (
   `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
       <div class="film-details__top-container">
@@ -203,3 +204,15 @@ export const createFilmDetailsTemplate = () => (
     </form>
   </section>`
 );
+export default class FilmsDetailsView extends AbstractView {
+  #film = null;
+
+  constructor(film) {
+    super();
+    this.#film = film;
+  }
+
+  get template() {
+    return createFilmDetailsTemplate(this.#film);
+  }
+}

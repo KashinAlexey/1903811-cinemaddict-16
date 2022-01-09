@@ -1,3 +1,5 @@
+import AbstractView from './abstract-view.js';
+
 const STATISTIC_FILTERS = ['all-time', 'today', 'week', 'month', 'year'];
 
 const replaceStringSimbol = (str, old, replacement) => str.replace(new RegExp(old, 'g'), replacement);
@@ -16,7 +18,7 @@ const createStatisticFiltersInputTemplate = () => (
   </label>`).join('')
 );
 
-export const createStatisticTemplate = () => (
+const createStatisticTemplate = () => (
   `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -72,3 +74,11 @@ export const createStatisticTemplate = () => (
 
   </section>`
 );
+
+export default class StatsView extends AbstractView {
+
+  get template() {
+    return createStatisticTemplate();
+  }
+}
+

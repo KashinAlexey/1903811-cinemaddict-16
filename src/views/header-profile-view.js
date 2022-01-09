@@ -5,11 +5,11 @@ const updateRating = (films) => {
   const ratingCount = films.filter((film) => film.userDetails.alreadyWatched === true).length;
 
   if (ratingCount > 20) {
-    rating = 'movie buff';
+    rating = 'Movie Buff';
   } else if (ratingCount <= 20 && ratingCount > 10) {
-    rating = 'fun';
+    rating = 'Fun';
   } else if (ratingCount <= 10 && ratingCount > 0) {
-    rating = 'novice';
+    rating = 'Novice';
   }
 
   return rating;

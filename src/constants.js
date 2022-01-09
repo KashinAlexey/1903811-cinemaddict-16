@@ -31,7 +31,7 @@ export const DataEvent = {
   ERROR: 'ERROR',
 };
 
-const FILM_COUNT = 5;
+export const FILM_COUNT = 5;
 const EXTRA_FILM_COUNT = 2;
 
 const FILTERS = ['watchlist', 'history', 'favorites'];
@@ -54,4 +54,4 @@ export const SortType = {
   RATING: 'rating',
 };
 
-export { RenderPosition, FILM_COUNT, EXTRA_FILM_COUNT, FILTERS, SORTS };
+export { RenderPosition, EXTRA_FILM_COUNT, FILTERS, SORTS };
