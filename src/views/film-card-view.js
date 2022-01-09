@@ -28,7 +28,7 @@ const createFilmDetailsGenre = (genres = []) => (
 );
 
 const createFilmCardTemplate = (film) => {
-  const {poster, title, totalRating, release, runtime, genre, description} = film.filmInfo;
+  const { poster, title, totalRating, release, runtime, genre, description } = film.filmInfo;
   const commentsCount = film.comments.length;
 
   return `<article class="film-card">
