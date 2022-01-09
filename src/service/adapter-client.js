@@ -4,6 +4,7 @@ export const adaptToClient = (data) => {
   const userDetails = data['user_details'];
 
   const adaptedRelease = {...release,
+    date: release['date'] !== null ? new Date(release['date']) : release['date'],
     releaseCountry: release['release_country'],
   };
 

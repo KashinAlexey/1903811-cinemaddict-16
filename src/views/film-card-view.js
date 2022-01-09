@@ -1,4 +1,5 @@
 import AbstractView from './abstract-view.js';
+import { reformatRuntime } from '../utils/commons.js';
 
 const createFilmCardControlsItem = () => (`
   <div class="film-card__controls">
@@ -20,41 +21,48 @@ const createFilmCardControlsItem = () => (`
   </div>`
 );
 
-export const createFilmCardTemplate = () => (
-  `<article class="film-card">
-    <a class="film-card__link">
+const createFilmDetailsGenre = (genres = []) => (
+  genres.map((genre) => `<span class="film-card__genre">
+    ${genre}
+  </span>`).join('')
+);
+
+const createFilmCardTemplate = (film) => {
+  const {poster, title, totalRating, release, runtime, genre, description} = film.filmInfo;
+  const commentsCount = film.comments.length;
+
+  return `<article class="film-card">
+    <a id="${film.id}" class="film-card__link">
       <h3 class="film-card__title">
-        The Dance of Life
+        ${title}
       </h3>
       <p class="film-card__rating">
-        8.3
+        ${totalRating}
       </p>
       <p class="film-card__info">
         <span class="film-card__year">
-          1929
+          ${release.date.getFullYear()}
         </span>
         <span class="film-card__duration">
-          1h 55m
+          ${reformatRuntime(runtime)}
         </span>
-        <span class="film-card__genre">
-          Musical
-        </span>
+        ${createFilmDetailsGenre(genre)}
       </p>
       <img
-        src="./images/posters/the-dance-of-life.jpg"
+        src=${poster}
         alt=""
         class="film-card__poster"
       />
       <p class="film-card__description">
-        Burlesque comic Ralph "Skid" Johnson (Skelly), and specialty dancer Bonny Lee King (Carroll), end up together on a cold, rainy night at a tr…
+        ${description.length > 140 ? `${description.slice(0, 140)}...`: description}
       </p>
       <span class="film-card__comments">
-        5 comments
+        ${commentsCount} comments
       </span>
     </a>
     ${createFilmCardControlsItem()}
-  </article>
-`);
+  </article>`;
+};
 
 export default class FilmCardView extends AbstractView {
   #film = null;
@@ -70,7 +78,7 @@ export default class FilmCardView extends AbstractView {
 
   setFilmCardClickHandler = (callback) => {
     this._callback.filmCardClick = callback;
-    this.element.querySelector('.film-card__link').addEventListener('click', this.#filmCardClickHandler);
+    this.element.querySelector('a').addEventListener('click', this.#filmCardClickHandler);
   }
 
   setFavoriteClickHandler = (callback) => {
@@ -90,21 +98,21 @@ export default class FilmCardView extends AbstractView {
 
   #filmCardClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.editClick();
+    this._callback.filmCardClick(evt.currentTarget.getAttribute('id'));
   }
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick();
+    this._callback.favoriteClick(evt.target);
   }
 
   #watchedClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick();
+    this._callback.watchedClick(evt.target);
   }
 
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick();
+    this._callback.watchlistClick(evt.target);
   }
 }
