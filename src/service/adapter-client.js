@@ -39,3 +39,11 @@ export const adaptToClient = (data) => {
 
   return adaptedData;
 };
+
+export const adaptCommentsToClient = (data) => {
+  const adaptedData = {...data,
+    date: data['date'] !== null ? new Date(data['date']) : data['date'],
+  };
+
+  return adaptedData;
+};
