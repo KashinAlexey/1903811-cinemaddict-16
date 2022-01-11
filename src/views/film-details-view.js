@@ -110,6 +110,7 @@ export default class FilmDetailsView extends AbstractView {
   constructor(film) {
     super();
     this.#film = film;
+    this._data = film;
   }
 
   get template() {

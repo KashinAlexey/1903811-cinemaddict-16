@@ -63,4 +63,14 @@ export default class DataModel extends AbstractObservable {
       this._notify(DataEvent.ERROR);
     }
   }
+
+  addComment = async (id, comment) => {
+    try {
+      const response = await this.#apiService.addData(Url.COMMENTS, id, comment);
+      this.#comments = response.comments.map(this.#adaptCommentsToClient);
+      this._notify(DataEvent.ADDED);
+    } catch(err) {
+      this._notify(DataEvent.ERROR);
+    }
+  }
 }

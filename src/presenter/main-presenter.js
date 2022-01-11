@@ -23,6 +23,8 @@ import { UserAction } from '../constants.js';
 const FILM_COUNT_PER_STEP = 5;
 
 export default class MainPresenter {
+  #film = null;
+
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
 
@@ -145,7 +147,7 @@ export default class MainPresenter {
     }
     this.#filmCommentsComponent = new CommentsView(this.comments);
     this.#filmCommentsComponent.setDeleteClickHandler(this.#handleFilmDetailsDeleteClick);
-    this.#filmCommentsComponent.setEmojiClickHandler();
+    this.#filmCommentsComponent.setInputUserCommentHandler(this.#handleFilmDetailsCtrlEnterKeydown);
     render(this.#filmsDetailsComponent, this.#filmCommentsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -188,7 +190,8 @@ export default class MainPresenter {
 
   #handleFilmCardClick = (id) => {
     const index = this.films.findIndex((film) => film.id === id);
-    this.#renderFilmDetails(this.films[index]);
+    this.#film = this.films[index];
+    this.#renderFilmDetails(this.#film);
     this.#dataModel.getComments(id);
   };
 
@@ -206,11 +209,22 @@ export default class MainPresenter {
     this.#handleViewAction(UserAction.DELETE_DATA, update);
   }
 
+  #handleFilmDetailsCtrlEnterKeydown = (comment) => {
+    this.#handleViewAction(UserAction.ADD_DATA, comment);
+  }
+
   #handleViewAction = async (actionType, update) => {
     switch (actionType) {
       case UserAction.DELETE_DATA:
         try {
           await this.#dataModel.deleteComment(update.id);
+        } catch(err) {
+          ///console.log('err');
+        }
+        break;
+      case UserAction.ADD_DATA:
+        try {
+          await this.#dataModel.addComment(this.#film.id, update);
         } catch(err) {
           ///console.log('err');
         }
@@ -227,6 +241,8 @@ export default class MainPresenter {
         this.#renderComments();
         break;
       case DataEvent.ADDED:
+        this.#renderComments();
+        //console.log(this.comments);
         break;
       case DataEvent.UPDATED:
         break;
