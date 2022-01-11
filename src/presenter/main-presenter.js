@@ -25,7 +25,6 @@ const FILM_COUNT_PER_STEP = 5;
 export default class MainPresenter {
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
-  #comments = null;
 
   #dataModel = null;
   #siteHeaderContainer = null;
@@ -37,7 +36,7 @@ export default class MainPresenter {
   #filmListComponent = null;
   #filmListContainerComponent = null;
   #filmsDetailsComponent = null;
-  #filmsDetailsCommentsComponent = null;
+  #filmCommentsComponent = null;
 
   constructor(dataModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
@@ -50,6 +49,11 @@ export default class MainPresenter {
   get films() {
     const films = this.#dataModel.films;
     return films;
+  }
+
+  get comments() {
+    const comments = this.#dataModel.comments;
+    return comments;
   }
 
   init = () => {
@@ -102,15 +106,6 @@ export default class MainPresenter {
     //render(this.#siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
   }
 
-  #renderFilmDetails = (film) => {
-    this.#filmsDetailsComponent = new FilmDetailsView(film);
-    this.#filmsDetailsComponent.setCloseClickHandler(this.#handleFilmDetailsCloseClick);
-    this.#filmsDetailsComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#filmsDetailsComponent.setWatchedClickHandler(this.#handleWatchedClick);
-    this.#filmsDetailsComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
-    render(this.#siteBodyContainer, this.#filmsDetailsComponent, RenderPosition.BEFOREEND);
-  }
-
   #renderFilm = (film) => {
     const filmCard = new FilmCardView(film);
     filmCard.setFilmCardClickHandler(this.#handleFilmCardClick);
@@ -133,6 +128,29 @@ export default class MainPresenter {
     if (filmCount > this.#renderedFilmCount) {
       this.#renderShowMoreButton();
     }
+  }
+
+  #renderFilmDetails = (film) => {
+    this.#filmsDetailsComponent = new FilmDetailsView(film);
+    this.#filmsDetailsComponent.setCloseClickHandler(this.#handleFilmDetailsCloseClick);
+    this.#filmsDetailsComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#filmsDetailsComponent.setWatchedClickHandler(this.#handleWatchedClick);
+    this.#filmsDetailsComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
+    render(this.#siteBodyContainer, this.#filmsDetailsComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderComments = () => {
+    if (this.#filmCommentsComponent) {
+      remove(this.#filmCommentsComponent);
+    }
+    this.#filmCommentsComponent = new CommentsView(this.comments);
+    this.#filmCommentsComponent.setDeleteClickHandler(this.#handleFilmDetailsDeleteClick);
+    this.#filmCommentsComponent.setEmojiClickHandler();
+    render(this.#filmsDetailsComponent, this.#filmCommentsComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderUserInputComment = () => {
+
   }
 
   #clearFilmList = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
@@ -170,8 +188,8 @@ export default class MainPresenter {
 
   #handleFilmCardClick = (id) => {
     const index = this.films.findIndex((film) => film.id === id);
-    this.#dataModel.getComments(id);
     this.#renderFilmDetails(this.films[index]);
+    this.#dataModel.getComments(id);
   };
 
   #handleFavoriteClick = () => {};
@@ -183,8 +201,8 @@ export default class MainPresenter {
   #handleFilmDetailsCloseClick = () => {}
 
   #handleFilmDetailsDeleteClick = (id) => {
-    const index = this.#comments.findIndex((comment) => comment.id === id);
-    const update = this.#comments[index];
+    const index = this.comments.findIndex((comment) => comment.id === id);
+    const update = this.comments[index];
     this.#handleViewAction(UserAction.DELETE_DATA, update);
   }
 
@@ -200,22 +218,20 @@ export default class MainPresenter {
     }
   }
 
-  #handleModelEvent = (eventType, data) => {
+  #handleModelEvent = (eventType) => {
     switch (eventType) {
       case DataEvent.INIT:
         this.renderSite();
         break;
       case DataEvent.GETED:
-        this.#comments = data;
-        this.#filmsDetailsCommentsComponent = new CommentsView(this.#comments);
-        this.#filmsDetailsCommentsComponent.setDeleteClickHandler(this.#handleFilmDetailsDeleteClick);
-        render(this.#filmsDetailsComponent, this.#filmsDetailsCommentsComponent, RenderPosition.BEFOREEND);
+        this.#renderComments();
         break;
       case DataEvent.ADDED:
         break;
       case DataEvent.UPDATED:
         break;
       case DataEvent.DELETED:
+        this.#renderComments();
         break;
       case DataEvent.ERROR:
         break;

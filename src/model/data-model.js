@@ -21,6 +21,10 @@ export default class DataModel extends AbstractObservable {
     return this.#films;
   }
 
+  get comments() {
+    return this.#comments;
+  }
+
   init = async () => {
     try {
       const films = await this.#apiService.getData(Url.MOVIES);
@@ -35,7 +39,7 @@ export default class DataModel extends AbstractObservable {
     try {
       const comments = await this.#apiService.getData(Url.COMMENTS, id);
       this.#comments = comments.map(this.#adaptCommentsToClient);
-      this._notify(DataEvent.GETED, this.#comments);
+      this._notify(DataEvent.GETED);
     } catch(err) {
       this._notify(DataEvent.ERROR);
     }
@@ -54,7 +58,7 @@ export default class DataModel extends AbstractObservable {
         ...this.#comments.slice(0, index),
         ...this.#comments.slice(index + 1),
       ];
-      this._notify(DataEvent.DELETED, this.#comments);
+      this._notify(DataEvent.DELETED);
     } catch(err) {
       this._notify(DataEvent.ERROR);
     }

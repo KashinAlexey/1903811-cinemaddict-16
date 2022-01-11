@@ -22,6 +22,15 @@ const formatDate = (date, str = 'yyyy/mm/dd h:m') => {
   return str;
 };
 
+const createEmojItmImage = (emoji) => (`
+  <img
+    src="./images/emoji/${emoji}.png"
+    width="30"
+    height="30"
+    alt="emoji"
+  />`
+);
+
 const createFilmDetailsEmojiItem = () => (
   EMOJIS.map((emoji) => `<input
     class="film-details__emoji-item visually-hidden"
@@ -33,12 +42,7 @@ const createFilmDetailsEmojiItem = () => (
   <label
     class="film-details__emoji-label"
     for="emoji-${emoji}">
-    <img
-      src="./images/emoji/${emoji}.png"
-      width="30"
-      height="30"
-      alt="emoji"
-    />
+    ${createEmojItmImage(emoji)}
   </label>`).join('')
 );
 
@@ -101,9 +105,10 @@ const createFilmDetailsCommentsTemplate = (comments) => {
         <label
           class="film-details__comment-label">
           <textarea
-            class="film-details__comment-input" placeholder="Select reaction below and write comment here"
-            name="comment">
-          </textarea>
+            class="film-details__comment-input"
+            placeholder="Select reaction below and write comment here"
+            name="comment"
+          ></textarea>
         </label>
 
         <div class="film-details__emoji-list">
@@ -126,6 +131,15 @@ export default class CommentsView extends SmartView {
     return createFilmDetailsCommentsTemplate(this.#comments);
   }
 
+  setEmojiClickHandler = (callback) => {
+    this._callback.emojiClick = callback;
+    const emojiButtons = this.element.querySelectorAll('.film-details__emoji-item');
+    for (const emojiButton of emojiButtons) {
+      emojiButton.addEventListener('input', this.#emojiClickHandler);
+    }
+  }
+
+
   setDeleteClickHandler = (callback) => {
     this._callback.deleteClick = callback;
     const deleteButtons = this.element.querySelectorAll('.film-details__comment-delete');
@@ -137,5 +151,11 @@ export default class CommentsView extends SmartView {
   #deleteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.deleteClick(evt.target.closest('li').id);
+  }
+
+  #emojiClickHandler = (evt) => {
+    evt.preventDefault();
+    //console.log(evt.currentTarget.id)
+
   }
 }
