@@ -1,12 +1,6 @@
 import AbstractView from './abstract-view.js';
 import { reformatRuntime } from '../utils/commons.js';
 
-const FILM_DETAILS_CONTROL_BUTTON = {
-  'watchlist': 'Add to watchlist',
-  'watched': 'Already watched',
-  'favorite': 'Add to favorites',
-};
-
 const createFilmDetailsGenre = (genres = []) => (
   genres.map((genre) => `<span class="film-details__genre">
     ${genre}
@@ -20,17 +14,36 @@ const createFilmDetailsRow = (row = '', detail = '') => (
   </tr>`
 );
 
-const createFilmDetailsControlButton = (isWatched = false) => (Object.entries(FILM_DETAILS_CONTROL_BUTTON).map(([button, text]) =>
-  `<button
-    type="button"
-    class="film-details__control-button
-    ${isWatched ? 'film-details__control-button--active' : ''}
-    film-details__control-button--${button}"
-    id="${button}"
-    name="${button}">
-    ${text}
-  </button>`).join('')
-);
+const createFilmDetailsControlButton = (film) => {
+  const {watchlist, alreadyWatched, favorite} = film.userDetails;
+
+  return `<section class="film-details__controls">
+    <button
+      type="button"
+      class="film-details__control-button film-details__control-button--watchlist
+      ${watchlist ? 'film-details__control-button--active': ''}"
+      id="watchlist"
+      name="watchlist">
+      Add to watchlist
+    </button>
+    <button
+      type="button"
+      class="film-details__control-button  film-details__control-button--watched
+      ${alreadyWatched ? 'film-details__control-button--active': ''}"
+      id="watched"
+      name="watched">
+      Already watched
+    </button>
+    <button
+      type="button"
+      class="film-details__control-button film-details__control-button--favorite
+      ${favorite ? 'film-details__control-button--active': ''}"
+      id="favorite"
+      name="favorite">
+      Add to favorites
+    </button>
+  </section>`;
+};
 
 const createFilmDetailsTemplate = (film) => {
   const { poster, title, alternativeTitle, totalRating, director, writers, actors, release, runtime, genre, description, ageRating } = film.filmInfo;
@@ -96,9 +109,7 @@ const createFilmDetailsTemplate = (film) => {
           </div>
         </div>
 
-        <section class="film-details__controls">
-          ${createFilmDetailsControlButton()}
-        </section>
+        ${createFilmDetailsControlButton(film)}
       </div>
     </form>
   </section>`;
@@ -109,7 +120,6 @@ export default class FilmDetailsView extends AbstractView {
   constructor(film) {
     super();
     this.#film = film;
-    this._data = film;
   }
 
   get template() {
@@ -138,21 +148,21 @@ export default class FilmDetailsView extends AbstractView {
 
   #closeClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.closeClick(evt.target);
+    this._callback.closeClick();
   }
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick(evt.target);
+    this._callback.favoriteClick(this.#film);
   }
 
   #watchedClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick(evt.target);
+    this._callback.watchedClick(this.#film);
   }
 
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick(evt.target);
+    this._callback.watchlistClick(this.#film);
   }
 }

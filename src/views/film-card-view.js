@@ -1,25 +1,30 @@
 import AbstractView from './abstract-view.js';
 import { reformatRuntime } from '../utils/commons.js';
 
-const createFilmCardControlsItem = () => (`
-  <div class="film-card__controls">
+const createFilmCardControlsItem = (userDetails) => {
+  const {watchlist, alreadyWatched, favorite} = userDetails;
+
+  return `<div class="film-card__controls">
     <button
-      class="film-card__controls-item film-card__controls-item--add-to-watchlist"
+      class="film-card__controls-item film-card__controls-item--add-to-watchlist
+      ${watchlist ? 'film-card__controls-item--active': ''}"
       type="button">
       Add to watchlist
     </button>
     <button
-      class="film-card__controls-item film-card__controls-item--mark-as-watched film-card__controls-item--active"
+      class="film-card__controls-item film-card__controls-item--mark-as-watched
+      ${alreadyWatched ? 'film-card__controls-item--active': ''}"
       type="button">
       Mark as watched
     </button>
     <button
-      class="film-card__controls-item film-card__controls-item--mark-as-favorite"
+      class="film-card__controls-item film-card__controls-item--mark-as-favorite
+      ${favorite ? 'film-card__controls-item--active': ''}"
       type="button">
       Mark as favorite
     </button>
-  </div>`
-);
+  </div>`;
+};
 
 const createFilmDetailsGenre = (genres = []) => (
   genres.map((genre) => `<span class="film-card__genre">
@@ -60,7 +65,7 @@ const createFilmCardTemplate = (film) => {
         ${commentsCount} comments
       </span>
     </a>
-    ${createFilmCardControlsItem()}
+    ${createFilmCardControlsItem(film.userDetails)}
   </article>`;
 };
 
@@ -98,21 +103,21 @@ export default class FilmCardView extends AbstractView {
 
   #filmCardClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.filmCardClick(evt.currentTarget.getAttribute('id'));
+    this._callback.filmCardClick(this.#film);
   }
 
   #favoriteClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.favoriteClick(evt.target);
+    this._callback.favoriteClick(this.#film);
   }
 
   #watchedClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchedClick(evt.target);
+    this._callback.watchedClick(this.#film);
   }
 
   #watchlistClickHandler = (evt) => {
     evt.preventDefault();
-    this._callback.watchlistClick(evt.target);
+    this._callback.watchlistClick(this.#film);
   }
 }

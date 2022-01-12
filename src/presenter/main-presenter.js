@@ -133,13 +133,20 @@ export default class MainPresenter {
   }
 
   #renderPopup = (film) => {
-    this.#popupComponent = new FilmDetailsView(film);
+    this.#film = film;
+
+    if (this.#popupComponent) {
+      remove(this.#popupComponent);
+    }
+
+    this.#popupComponent = new FilmDetailsView(this.#film);
     this.#popupComponent.setCloseClickHandler(this.#handlePopupCloseClick);
     this.#popupComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#popupComponent.setWatchedClickHandler(this.#handleWatchedClick);
     this.#popupComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
     document.addEventListener('keydown', this.#escKeydownHandler);
     render(this.#siteBodyContainer, this.#popupComponent, RenderPosition.BEFOREEND);
+    this.#dataModel.getComments(this.#film.id);
   }
 
   #renderComments = () => {
@@ -186,18 +193,33 @@ export default class MainPresenter {
     }
   }
 
-  #handleFilmCardClick = (id) => {
-    const index = this.films.findIndex((film) => film.id === id);
-    this.#film = this.films[index];
-    this.#renderPopup(this.#film);
-    this.#dataModel.getComments(id);
+  #handleFilmCardClick = (film) => {
+    this.#renderPopup(film);
   };
 
-  #handleFavoriteClick = () => {};
+  #handleFavoriteClick = (film) => {
+    let userDetails = Object.assign({}, film.userDetails);
+    userDetails = {...userDetails, favorite: !userDetails.favorite};
+    this.#handleViewAction(
+      UserAction.UPDATE_DATA,
+      {...film, userDetails});
+  };
 
-  #handleWatchedClick = () => {};
+  #handleWatchedClick = (film) => {
+    let userDetails = Object.assign({}, film.userDetails);
+    userDetails = {...userDetails, alreadyWatched: !userDetails.alreadyWatched};
+    this.#handleViewAction(
+      UserAction.UPDATE_DATA,
+      {...film, userDetails});
+  };
 
-  #handleWatchlistClick = () => {};
+  #handleWatchlistClick = (film) => {
+    let userDetails = Object.assign({}, film.userDetails);
+    userDetails = {...userDetails, watchlist: !userDetails.watchlist};
+    this.#handleViewAction(
+      UserAction.UPDATE_DATA,
+      {...film, userDetails});
+  };
 
   #handlePopupCloseClick = () => {
     remove(this.#commentsComponent);
@@ -208,7 +230,9 @@ export default class MainPresenter {
   #handleCommentDeleteClick = (id) => {
     const index = this.comments.findIndex((comment) => comment.id === id);
     const update = this.comments[index];
-    this.#handleViewAction(UserAction.DELETE_DATA, update);
+    this.#handleViewAction(
+      UserAction.DELETE_DATA,
+      update);
   }
 
   #escKeydownHandler = (evt) => {
@@ -222,7 +246,9 @@ export default class MainPresenter {
   }
 
   #handlePopupCtrlEnterKeydown = (comment) => {
-    this.#handleViewAction(UserAction.ADD_DATA, comment);
+    this.#handleViewAction(
+      UserAction.ADD_DATA,
+      comment);
   }
 
   #handleViewAction = async (actionType, update) => {
@@ -241,10 +267,17 @@ export default class MainPresenter {
           ///console.log('err');
         }
         break;
+      case UserAction.UPDATE_DATA:
+        try {
+          await this.#dataModel.updateFilm(update);
+        } catch(err) {
+          ///console.log('err');
+        }
+        break;
     }
   }
 
-  #handleModelEvent = (eventType) => {
+  #handleModelEvent = (eventType, data) => {
     switch (eventType) {
       case DataEvent.INIT:
         this.renderSite();
@@ -254,9 +287,9 @@ export default class MainPresenter {
         break;
       case DataEvent.ADDED:
         this.#renderComments();
-        //console.log(this.comments);
         break;
       case DataEvent.UPDATED:
+        this.#renderPopup(data);
         break;
       case DataEvent.DELETED:
         this.#renderComments();
