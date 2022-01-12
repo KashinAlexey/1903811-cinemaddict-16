@@ -1,17 +1,18 @@
-import SmartView from './smart-view.js';
+import AbstractView from './abstract-view.js';
+import he from 'he';
 
 const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
 const dateFormat = 'yyyy/mm/dd h:m';
 
 const emptyComment = {
-  emotion: '',
+  emotion: null,
   comment: '',
 };
 
 const formatDate = (date, str = 'yyyy/mm/dd h:m') => {
   const yyyy = `${date.getFullYear()}`;
-  const mm = date.getMonth() >= 10 ? `${date.getMonth()}` : `0${date.getMonth()}`;
+  const mm = date.getMonth() >= 10 ? `${+date.getMonth() + 1}` : `0${+date.getMonth() + 1}`;
   const dd = date.getDate() >= 10 ? `${date.getDate()}` : `0${date.getDate()}`;
   const m = date.getMinutes() >= 10 ? `${date.getMinutes()}` : `0${date.getMinutes()}`;
   const h = date.getHours() >= 10 ? `${date.getHours()}` : `0${date.getHours()}`;
@@ -126,27 +127,28 @@ const createFilmDetailsCommentsTemplate = (comments) => {
   </div>`;
 };
 
-export default class CommentsView extends SmartView {
+export default class CommentsView extends AbstractView {
   #comments = null;
   #userComment = null;
   #textAreaElement = null;
+  #userEmodjiElement = null;
 
   constructor(comments) {
     super();
     this.#comments = comments;
-    this.#userComment = emptyComment;
+    this.#userComment = Object.assign({}, emptyComment);
     this.#setEmojiClickHandler();
     this.#textAreaElement = this.element.querySelector('.film-details__comment-input');
+    this.#userEmodjiElement = this.element.querySelector('.film-details__add-emoji-label').querySelector('img');
   }
 
   get template() {
     return createFilmDetailsCommentsTemplate(this.#comments);
   }
 
-  setCtrlEnterKeydownHandler = (callback) => {
-    this._callback.ctrlEnterKeydown = callback;
-    document.addEventListener('keydown', this.#ctrlEnterKeydownHandler);
-  }
+  #checkValidity = () => (
+    this.#userComment.comment !== '' && this.#userComment.emotion !== null
+  );
 
   #setEmojiClickHandler = (callback) => {
     this._callback.emojiClick = callback;
@@ -164,15 +166,16 @@ export default class CommentsView extends SmartView {
     }
   }
 
-  setInputUserCommentHandler = (callback) => {
+  setCommentInputHandler = (callback) => {
     this._callback.ctrlEnterKeydown = callback;
-    this.element.querySelector('.film-details__comment-input').addEventListener('keydown', this.#inputUserCommentHandler);
   }
 
-  #inputUserCommentHandler = (evt) => {
+  commentInputHandler = (evt) => {
     if (evt.ctrlKey && evt.key === 'Enter') {
-      this.#ctrlEnterKeydownHandler();
+      this.#ctrlEnterKeydownHandler(evt);
     }
+
+    this.#userComment.comment = he.encode(this.#textAreaElement.value);
   }
 
   #deleteClickHandler = (evt) => {
@@ -183,16 +186,19 @@ export default class CommentsView extends SmartView {
   #emojiClickHandler = (evt) => {
     evt.preventDefault();
     const emoji = evt.currentTarget.value;
-    const userEmodjiElement = this.element.querySelector('.film-details__add-emoji-label').querySelector('img');
-    userEmodjiElement.src = `images/emoji/${emoji}.png`;
-    userEmodjiElement.width = '55';
-    userEmodjiElement.height = '55';
-    userEmodjiElement.alt = `emoji-${emoji}`;
+    this.#userEmodjiElement.src = `images/emoji/${emoji}.png`;
+    this.#userEmodjiElement.width = '55';
+    this.#userEmodjiElement.height = '55';
+    this.#userEmodjiElement.alt = `emoji-${emoji}`;
     this.#userComment.emotion = emoji;
   }
 
-  #ctrlEnterKeydownHandler = () => {
-    this.#userComment.comment = this.#textAreaElement.value;
-    this._callback.ctrlEnterKeydown(this.#userComment);
+  #ctrlEnterKeydownHandler = (evt) => {
+    evt.preventDefault();
+    const validity = this.#checkValidity();
+
+    if (validity) {
+      this._callback.ctrlEnterKeydown(this.#userComment);
+    }
   }
 }

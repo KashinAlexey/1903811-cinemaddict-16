@@ -1,6 +1,5 @@
 import AbstractView from './abstract-view.js';
 import { reformatRuntime } from '../utils/commons.js';
-//const FILM_DETAILS_ROWS = ['Director', 'Writers', 'Actors', 'Release Date', 'Runtime', 'Country', 'Genres'];
 
 const FILM_DETAILS_CONTROL_BUTTON = {
   'watchlist': 'Add to watchlist',

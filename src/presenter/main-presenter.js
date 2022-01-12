@@ -138,6 +138,7 @@ export default class MainPresenter {
     this.#filmsDetailsComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
     this.#filmsDetailsComponent.setWatchedClickHandler(this.#handleWatchedClick);
     this.#filmsDetailsComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
+    document.addEventListener('keydown', this.#escKeydownHandler);
     render(this.#siteBodyContainer, this.#filmsDetailsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -147,7 +148,7 @@ export default class MainPresenter {
     }
     this.#filmCommentsComponent = new CommentsView(this.comments);
     this.#filmCommentsComponent.setDeleteClickHandler(this.#handleFilmDetailsDeleteClick);
-    this.#filmCommentsComponent.setInputUserCommentHandler(this.#handleFilmDetailsCtrlEnterKeydown);
+    this.#filmCommentsComponent.setCommentInputHandler(this.#handleFilmDetailsCtrlEnterKeydown);
     render(this.#filmsDetailsComponent, this.#filmCommentsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -201,12 +202,26 @@ export default class MainPresenter {
 
   #handleWatchlistClick = () => {};
 
-  #handleFilmDetailsCloseClick = () => {}
+  #handleFilmDetailsCloseClick = () => {
+    remove(this.#filmCommentsComponent);
+    remove(this.#filmsDetailsComponent);
+    document.removeEventListener('keydown', this.#escKeydownHandler);
+  }
 
   #handleFilmDetailsDeleteClick = (id) => {
     const index = this.comments.findIndex((comment) => comment.id === id);
     const update = this.comments[index];
     this.#handleViewAction(UserAction.DELETE_DATA, update);
+  }
+
+  #escKeydownHandler = (evt) => {
+    if (evt.key === 'Escape') {
+      this.#handleFilmDetailsCloseClick();
+      document.removeEventListener('keydown', this.#escKeydownHandler);
+      return;
+    }
+
+    this.#filmCommentsComponent.commentInputHandler(evt);
   }
 
   #handleFilmDetailsCtrlEnterKeydown = (comment) => {
