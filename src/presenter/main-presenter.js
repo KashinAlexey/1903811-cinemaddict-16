@@ -37,8 +37,8 @@ export default class MainPresenter {
   #showMoreButtonComponent = null;
   #filmListComponent = null;
   #filmListContainerComponent = null;
-  #filmsDetailsComponent = null;
-  #filmCommentsComponent = null;
+  #popupComponent = null;
+  #commentsComponent = null;
 
   constructor(dataModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
@@ -132,28 +132,25 @@ export default class MainPresenter {
     }
   }
 
-  #renderFilmDetails = (film) => {
-    this.#filmsDetailsComponent = new FilmDetailsView(film);
-    this.#filmsDetailsComponent.setCloseClickHandler(this.#handleFilmDetailsCloseClick);
-    this.#filmsDetailsComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
-    this.#filmsDetailsComponent.setWatchedClickHandler(this.#handleWatchedClick);
-    this.#filmsDetailsComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
+  #renderPopup = (film) => {
+    this.#popupComponent = new FilmDetailsView(film);
+    this.#popupComponent.setCloseClickHandler(this.#handlePopupCloseClick);
+    this.#popupComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#popupComponent.setWatchedClickHandler(this.#handleWatchedClick);
+    this.#popupComponent.setWatchlistClickHandler(this. #handleWatchlistClick);
     document.addEventListener('keydown', this.#escKeydownHandler);
-    render(this.#siteBodyContainer, this.#filmsDetailsComponent, RenderPosition.BEFOREEND);
+    render(this.#siteBodyContainer, this.#popupComponent, RenderPosition.BEFOREEND);
   }
 
   #renderComments = () => {
-    if (this.#filmCommentsComponent) {
-      remove(this.#filmCommentsComponent);
+    if (this.#commentsComponent) {
+      remove(this.#commentsComponent);
     }
-    this.#filmCommentsComponent = new CommentsView(this.comments);
-    this.#filmCommentsComponent.setDeleteClickHandler(this.#handleFilmDetailsDeleteClick);
-    this.#filmCommentsComponent.setCommentInputHandler(this.#handleFilmDetailsCtrlEnterKeydown);
-    render(this.#filmsDetailsComponent, this.#filmCommentsComponent, RenderPosition.BEFOREEND);
-  }
 
-  #renderUserInputComment = () => {
-
+    this.#commentsComponent = new CommentsView(this.comments);
+    this.#commentsComponent.setDeleteClickHandler(this.#handleCommentDeleteClick);
+    this.#commentsComponent.setCommentInputHandler(this.#handlePopupCtrlEnterKeydown);
+    render(this.#popupComponent, this.#commentsComponent, RenderPosition.BEFOREEND);
   }
 
   #clearFilmList = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
@@ -192,7 +189,7 @@ export default class MainPresenter {
   #handleFilmCardClick = (id) => {
     const index = this.films.findIndex((film) => film.id === id);
     this.#film = this.films[index];
-    this.#renderFilmDetails(this.#film);
+    this.#renderPopup(this.#film);
     this.#dataModel.getComments(id);
   };
 
@@ -202,13 +199,13 @@ export default class MainPresenter {
 
   #handleWatchlistClick = () => {};
 
-  #handleFilmDetailsCloseClick = () => {
-    remove(this.#filmCommentsComponent);
-    remove(this.#filmsDetailsComponent);
+  #handlePopupCloseClick = () => {
+    remove(this.#commentsComponent);
+    remove(this.#popupComponent);
     document.removeEventListener('keydown', this.#escKeydownHandler);
   }
 
-  #handleFilmDetailsDeleteClick = (id) => {
+  #handleCommentDeleteClick = (id) => {
     const index = this.comments.findIndex((comment) => comment.id === id);
     const update = this.comments[index];
     this.#handleViewAction(UserAction.DELETE_DATA, update);
@@ -216,15 +213,15 @@ export default class MainPresenter {
 
   #escKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
-      this.#handleFilmDetailsCloseClick();
+      this.#handlePopupCloseClick();
       document.removeEventListener('keydown', this.#escKeydownHandler);
       return;
     }
 
-    this.#filmCommentsComponent.commentInputHandler(evt);
+    this.#commentsComponent.commentInputHandler(evt);
   }
 
-  #handleFilmDetailsCtrlEnterKeydown = (comment) => {
+  #handlePopupCtrlEnterKeydown = (comment) => {
     this.#handleViewAction(UserAction.ADD_DATA, comment);
   }
 
