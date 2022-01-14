@@ -1,26 +1,18 @@
 import AbstractView from './abstract-view.js';
 import { MenuItem } from '../constants.js';
-import { FILTERS } from '../constants.js';
 
-const createMainNavigationItem = () => (
-  FILTERS.map((filter) => `<a href="#${filter}"
-  class="main-navigation__item">
-  ${filter.charAt(0).toUpperCase() + filter.slice(1)}
-  <span class="main-navigation__item-count">
-    13
-  </span>
-  </a>`).join('')
-);
-
-const createMainNavigationTemplate = () => (
-  `<nav class="main-navigation">
+const createMainNavigationTemplate = (filterItems, currentFilterType) => (`<nav class="main-navigation">
     <div class="main-navigation__items">
-      <a href="#all"
-        class="main-navigation__item"
-        data-main-navigation-type="${MenuItem.ALL}">
-        All movies
-      </a>
-      ${createMainNavigationItem()}
+      ${filterItems.map((filter) =>`<a href="#${filter.type}"
+        class="main-navigation__item
+        ${filter.type === currentFilterType ? 'main-navigation__item--active' : ''}"
+        data-main-navigation-type="${filter.type}">
+        ${filter.name}
+        ${filter.type !== 'ALL' ? `<span class="main-navigation__item-count"
+          data-main-navigation-type="${filter.type}">
+          ${filter.count}
+        </span>` : ''}
+      </a>`).join('')}
     </div>
     <a href="#stats"
       class="main-navigation__additional"
@@ -31,9 +23,17 @@ const createMainNavigationTemplate = () => (
 );
 
 export default class NavigationView extends AbstractView {
+  #filters = null;
+  #currentFilter = null;
+
+  constructor(filters, currentFilterType) {
+    super();
+    this.#filters = filters;
+    this.#currentFilter = currentFilterType;
+  }
 
   get template() {
-    return createMainNavigationTemplate();
+    return createMainNavigationTemplate(this.#filters, this.#currentFilter);
   }
 
   setMenuItem = (menuItem) => {
@@ -47,7 +47,7 @@ export default class NavigationView extends AbstractView {
   }
 
   #menuClickHandler = (evt) => {
-    if (evt.target.tagName !== 'A') {
+    if (evt.target.tagName !== 'A' && evt.target.tagName !== 'SPAN') {
       return;
     }
     evt.preventDefault();

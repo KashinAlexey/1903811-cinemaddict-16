@@ -4,7 +4,7 @@ import { render } from '../utils/render.js';
 import { replace } from '../utils/render.js';
 import HeaderProfileView from '../views/header-profile-view.js';
 import { RenderPosition } from '../constants.js';
-import NavigationView from '../views/navigation-view.js';
+//import NavigationView from '../views/navigation-view.js';
 import SortView from '../views/sort-view.js';
 import { SortType } from '../constants.js';
 import FilmsView from '../views/films-view.js';
@@ -19,6 +19,11 @@ import MostCommentedFilmsListView from '../views/most-commented-film-list-view.j
 import FilmDetailsView from '../views/film-details-view.js';
 import CommentsView from '../views/comments-view.js';
 import { UserAction } from '../constants.js';
+import FilterPresenter from './filter-presenter.js';
+import FilterModel from '../model/filter-model.js';
+import { FilterType } from '../constants.js';
+import { filter } from '../utils/filter.js';
+
 //import StatsView from '../views/statistic-view.js';
 
 export const Mode = {
@@ -34,9 +39,11 @@ export default class MainPresenter {
 
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
+  #filterType = FilterType.ALL;
   #mode = Mode.DEFAULT;
 
   #dataModel = null;
+  #filterModel = null;
   #siteHeaderContainer = null;
   #siteMainContainer = null;
   #siteFooterContainer = null;
@@ -57,8 +64,11 @@ export default class MainPresenter {
   }
 
   get films() {
+    this.#filterType = this.#filterModel.filter;
     const films = this.#dataModel.films;
-    return films;
+    const filteredfilms = filter[this.#filterType](films);
+
+    return filteredfilms;
   }
 
   get comments() {
@@ -67,15 +77,17 @@ export default class MainPresenter {
   }
 
   init = () => {
+    this.#filterModel = new FilterModel();
     this.#dataModel.addObserver(this.#handleModelEvent);
+    this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
   renderSite = () => {
     const headerProfileComponent = new HeaderProfileView(this.films);
     render(this.#siteHeaderContainer, headerProfileComponent, RenderPosition.BEFOREEND);
 
-    const navigationComponent = new NavigationView();
-    render(this.#siteMainContainer, navigationComponent, RenderPosition.AFTERBEGIN);
+    const filterPresenter = new FilterPresenter(this.#siteMainContainer, this.#filterModel, this.#dataModel);
+    filterPresenter.init();
 
     const sortComponent = new SortView(SortType.DEFAULT);
     render(this.#siteMainContainer, sortComponent, RenderPosition.BEFOREEND);
@@ -178,6 +190,11 @@ export default class MainPresenter {
 
   #clearFilmList = ({resetRenderedTaskCount = false, resetSortType = false} = {}) => {
     const filmCount = this.films.length;
+
+    this.#filmCards.forEach((filmCard) => remove(filmCard));
+    this.#filmCards.clear();
+
+    remove(this.#showMoreButtonComponent);
 
     if (resetRenderedTaskCount) {
       this.#renderedFilmCount = FILM_COUNT_PER_STEP;
@@ -317,6 +334,11 @@ export default class MainPresenter {
         break;
       case DataEvent.ERROR:
         break;
+      case DataEvent.FILTERED:
+        this.#clearFilmList({resetRenderedTaskCount: true, resetSortType: true});
+        this.#renderFilmList();
+        break;
+
     }
   };
 }

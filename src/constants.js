@@ -29,23 +29,24 @@ export const DataEvent = {
   UPDATED: 'UPDATED',
   DELETED: 'DELETED',
   ERROR: 'ERROR',
+  FILTERED: 'FILTERED',
 };
 
 export const FILM_COUNT = 5;
 const EXTRA_FILM_COUNT = 2;
 
-const FILTERS = ['watchlist', 'history', 'favorites'];
 const SORTS = ['Sort by default', 'Sort by date', 'Sort by rating'];
 
 export const MenuItem = {
-  ALL: 'All movies',
+  ALL: 'ALL',
   STATS: 'Stats',
 };
 
 export const FilterType = {
-  WATCHLIST: 'Watchlist',
-  HISTORY: 'History',
-  FAVORITES: 'Favorites',
+  ALL: 'ALL',
+  WATCHLIST: 'WATCHLIST',
+  HISTORY: 'HISTORY',
+  FAVORITES: 'FAVORITES',
 };
 
 export const SortType = {
@@ -54,4 +55,4 @@ export const SortType = {
   RATING: 'rating',
 };
 
-export { RenderPosition, EXTRA_FILM_COUNT, FILTERS, SORTS };
+export { RenderPosition, EXTRA_FILM_COUNT, SORTS };
