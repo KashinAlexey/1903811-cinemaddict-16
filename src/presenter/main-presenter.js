@@ -1,6 +1,7 @@
 import { DataEvent } from '../constants.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
+import { replace } from '../utils/render.js';
 import HeaderProfileView from '../views/header-profile-view.js';
 import { RenderPosition } from '../constants.js';
 import NavigationView from '../views/navigation-view.js';
@@ -20,13 +21,20 @@ import CommentsView from '../views/comments-view.js';
 import { UserAction } from '../constants.js';
 //import StatsView from '../views/statistic-view.js';
 
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 const FILM_COUNT_PER_STEP = 5;
 
 export default class MainPresenter {
   #film = null;
+  #filmCards = new Map();
 
   #renderedFilmCount = FILM_COUNT_PER_STEP;
   #currentSortType = SortType.DEFAULT;
+  #mode = Mode.DEFAULT;
 
   #dataModel = null;
   #siteHeaderContainer = null;
@@ -109,12 +117,19 @@ export default class MainPresenter {
   }
 
   #renderFilm = (film) => {
+    const prevFilmCardComponent = this.#filmCards.get(film.id) || null;
     const filmCard = new FilmCardView(film);
+    this.#filmCards.set(film.id, filmCard);
     filmCard.setFilmCardClickHandler(this.#handleFilmCardClick);
     filmCard.setFavoriteClickHandler(this.#handleFavoriteClick);
     filmCard.setWatchedClickHandler(this.#handleWatchedClick);
     filmCard.setWatchlistClickHandler(this.#handleWatchlistClick);
-    render(this.#filmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
+    if (prevFilmCardComponent === null) {
+      render(this.#filmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
+    } else {
+      replace(filmCard, prevFilmCardComponent);
+      remove(prevFilmCardComponent);
+    }
   }
 
   #renderFilms = (films) => {
@@ -134,6 +149,7 @@ export default class MainPresenter {
 
   #renderPopup = (film) => {
     this.#film = film;
+    this.#mode = Mode.EDITING;
 
     if (this.#popupComponent) {
       remove(this.#popupComponent);
@@ -222,6 +238,7 @@ export default class MainPresenter {
   };
 
   #handlePopupCloseClick = () => {
+    this.#mode = Mode.DEFAULT;
     remove(this.#commentsComponent);
     remove(this.#popupComponent);
     document.removeEventListener('keydown', this.#escKeydownHandler);
@@ -238,7 +255,6 @@ export default class MainPresenter {
   #escKeydownHandler = (evt) => {
     if (evt.key === 'Escape') {
       this.#handlePopupCloseClick();
-      document.removeEventListener('keydown', this.#escKeydownHandler);
       return;
     }
 
@@ -289,7 +305,12 @@ export default class MainPresenter {
         this.#renderComments();
         break;
       case DataEvent.UPDATED:
-        this.#renderPopup(data);
+        if (this.#mode === Mode.EDITING) {
+          this.#renderPopup(data);
+          this.#renderFilm(data);
+        } else {
+          this.#renderFilm(data);
+        }
         break;
       case DataEvent.DELETED:
         this.#renderComments();
