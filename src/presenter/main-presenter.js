@@ -23,6 +23,7 @@ import FilterPresenter from './filter-presenter.js';
 import FilterModel from '../model/filter-model.js';
 import { FilterType } from '../constants.js';
 import { filter } from '../utils/filter.js';
+import NoFilmsView from '../views/no-films-view.js';
 
 //import StatsView from '../views/statistic-view.js';
 
@@ -54,6 +55,7 @@ export default class MainPresenter {
   #filmListContainerComponent = null;
   #popupComponent = null;
   #commentsComponent = null;
+  #noFilmsComponent = null;
 
   constructor(dataModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
@@ -148,9 +150,19 @@ export default class MainPresenter {
     films.forEach((film) => this.#renderFilm(film));
   }
 
+  #renderNoFilms = () => {
+    this.#noFilmsComponent = new NoFilmsView(this.#filterType);
+    render(this.#filmListComponent, this.#noFilmsComponent, RenderPosition.AFTERBEGIN);
+  }
+
   #renderFilmList = () => {
     const films = this.films;
     const filmCount = films.length;
+
+    if (filmCount === 0) {
+      this.#renderNoFilms();
+      return;
+    }
 
     this.#renderFilms(films.slice(0, Math.min(filmCount, this.#renderedFilmCount)));
 
@@ -195,6 +207,10 @@ export default class MainPresenter {
     this.#filmCards.clear();
 
     remove(this.#showMoreButtonComponent);
+
+    if (this.#noFilmsComponent) {
+      remove(this.#noFilmsComponent);
+    }
 
     if (resetRenderedTaskCount) {
       this.#renderedFilmCount = FILM_COUNT_PER_STEP;
@@ -324,9 +340,11 @@ export default class MainPresenter {
       case DataEvent.UPDATED:
         if (this.#mode === Mode.EDITING) {
           this.#renderPopup(data);
-          this.#renderFilm(data);
-        } else {
-          this.#renderFilm(data);
+          this.#clearFilmList({resetRenderedTaskCount: false, resetSortType: true});
+          this.#renderFilmList();
+        } else if (this.#mode === Mode.DEFAULT) {
+          this.#clearFilmList({resetRenderedTaskCount: false, resetSortType: true});
+          this.#renderFilmList();
         }
         break;
       case DataEvent.DELETED:
