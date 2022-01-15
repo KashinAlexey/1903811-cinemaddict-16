@@ -60,6 +60,7 @@ export default class MainPresenter {
   #noFilmsComponent = null;
   #sortComponent = null;
   #filmsComponent = null;
+  #headerProfileComponent = null;
 
   constructor(dataModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
@@ -98,8 +99,7 @@ export default class MainPresenter {
   }
 
   renderSite = () => {
-    const headerProfileComponent = new HeaderProfileView(this.films);
-    render(this.#siteHeaderContainer, headerProfileComponent, RenderPosition.BEFOREEND);
+    this.#renderHeaderProfile();
 
     const filterPresenter = new FilterPresenter(this.#siteMainContainer, this.#filterModel, this.#dataModel);
     filterPresenter.init();
@@ -131,6 +131,15 @@ export default class MainPresenter {
 
     //const statsComponent = new StatsView();
     //render(this.#siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderHeaderProfile = () => {
+    if (this.#headerProfileComponent) {
+      remove(this.#headerProfileComponent);
+    }
+
+    this.#headerProfileComponent = new HeaderProfileView(this.films);
+    render(this.#siteHeaderContainer, this.#headerProfileComponent, RenderPosition.BEFOREEND);
   }
 
   #renderFilm = (film) => {
@@ -178,6 +187,8 @@ export default class MainPresenter {
   #renderFilmList = () => {
     const films = this.films;
     const filmCount = films.length;
+
+    this.#renderHeaderProfile();
 
     if (filmCount === 0) {
       this.#renderNoFilms();
