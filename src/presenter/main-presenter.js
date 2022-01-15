@@ -181,6 +181,7 @@ export default class MainPresenter {
 
     if (filmCount === 0) {
       this.#renderNoFilms();
+      remove(this.#sortComponent);
       return;
     }
 
