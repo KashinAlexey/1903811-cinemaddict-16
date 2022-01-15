@@ -11,3 +11,32 @@ export const reformatRuntime = (runtime) => {
 
   return timeString;
 };
+
+// Compare functions in arr.sort(foo)
+const getWeightForNull = (A, B) => {
+  if (A === null && B === null) {
+    return 0;
+  }
+
+  if (A === null) {
+    return 1;
+  }
+
+  if (B === null) {
+    return -1;
+  }
+
+  return null;
+};
+
+export const sortDate = (dayA, dayB, type) => {
+  const weight = getWeightForNull(dayA, dayB);
+
+  return type === 'Up'? weight ?? dayB - dayA : weight ?? dayA - dayB;
+};
+
+export const sortNumber = (numberA, numberB, type) => {
+  const weight = getWeightForNull(numberA, numberB);
+
+  return type === 'Up'? weight ?? numberB - numberA : weight ?? numberA - numberB;
+};
