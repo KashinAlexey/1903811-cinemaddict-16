@@ -4,7 +4,7 @@ const STATISTIC_FILTERS = ['all-time', 'today', 'week', 'month', 'year'];
 
 const replaceStringSimbol = (str, old, replacement) => str.replace(new RegExp(old, 'g'), replacement);
 
-const createStatisticFiltersInputTemplate = () => (
+const createStatisticFiltersInputTemplate = (filterType) => (
   STATISTIC_FILTERS.map((filter) => `<input
     type="radio"
     class="statistic__filters-input
@@ -12,13 +12,13 @@ const createStatisticFiltersInputTemplate = () => (
     name="statistic-filter"
     id="statistic-${filter}"
     value="${filter}"
-    checked>
+    ${filterType === filter ? 'checked' : ''}>
   <label for="statistic-${filter}" class="statistic__filters-label">
   ${(replaceStringSimbol(filter, '-', ' ')).charAt(0).toUpperCase() + replaceStringSimbol(filter, '-', ' ').slice(1)}
   </label>`).join('')
 );
 
-const createStatisticTemplate = () => (
+const createStatisticTemplate = (filterType, duration, genre, watched) => (
   `<section class="statistic">
     <p class="statistic__rank">
       Your rank
@@ -29,7 +29,7 @@ const createStatisticTemplate = () => (
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      ${createStatisticFiltersInputTemplate()}
+      ${createStatisticFiltersInputTemplate(filterType)}
     </form>
 
     <ul class="statistic__text-list">
@@ -38,7 +38,7 @@ const createStatisticTemplate = () => (
           You watched
         </h4>
         <p class="statistic__item-text">
-          28
+          ${watched}
           <span class="statistic__item-description">
             movies
           </span>
@@ -49,9 +49,13 @@ const createStatisticTemplate = () => (
           Total duration
         </h4>
         <p class="statistic__item-text">
-          69
+          ${Math.trunc(duration / 60)}
           <span class="statistic__item-description">
-            h </span> 41 <span class="statistic__item-description">m
+            h
+          </span>
+          ${Math.trunc(duration % 60)}
+          <span class="statistic__item-description">
+            m
           </span>
         </p>
       </li>
@@ -60,13 +64,10 @@ const createStatisticTemplate = () => (
           Top genre
         </h4>
         <p class="statistic__item-text">
-          Drama
+          ${genre}
         </p>
       </li>
     </ul>
-
-    <!-- Пример диаграммы -->
-    <img src="images/cinemaddict-stats-markup.png" alt="Пример диаграммы">
 
     <div class="statistic__chart-wrap">
       <canvas class="statistic__chart" width="1000"></canvas>
@@ -76,9 +77,31 @@ const createStatisticTemplate = () => (
 );
 
 export default class StatsView extends AbstractView {
+  #filterType = null;
+  #duration = null;
+  #genre = null;
+  #watched = null;
+
+  constructor(filterType, duration, genre, watched) {
+    super();
+    this.#filterType = filterType;
+    this.#duration = duration;
+    this.#genre = genre;
+    this.#watched = watched;
+  }
 
   get template() {
-    return createStatisticTemplate();
+    return createStatisticTemplate(this.#filterType, this.#duration, this.#genre, this.#watched);
+  }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.querySelector('.statistic__filters').addEventListener('input', this.#filterTypeChangeHandler);
+  }
+
+  #filterTypeChangeHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filterTypeChange(evt.target.value);
   }
 }
 

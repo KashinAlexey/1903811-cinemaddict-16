@@ -13,9 +13,9 @@ import FilmsListView from '../views/films-list-view.js';
 import ShowMoreButtonView from '../views/show-more-button-view.js';
 import FilmsListContainerView from '../views/film-list-container-view.js';
 import FilmCardView from '../views/film-card-view.js';
-import { EXTRA_FILM_COUNT } from '../constants.js';
-import TopRatedFilmsListView from '../views/top-rated-film-list-view.js';
-import MostCommentedFilmsListView from '../views/most-commented-film-list-view.js';
+//import { EXTRA_FILM_COUNT } from '../constants.js';
+//import TopRatedFilmsListView from '../views/top-rated-film-list-view.js';
+//import MostCommentedFilmsListView from '../views/most-commented-film-list-view.js';
 import FilmDetailsView from '../views/film-details-view.js';
 import CommentsView from '../views/comments-view.js';
 import { UserAction } from '../constants.js';
@@ -28,6 +28,7 @@ import { sortNumber } from '../utils/commons.js';
 import { sortDate } from '../utils/commons.js';
 
 //import StatsView from '../views/statistic-view.js';
+import StatisticPresenter from './statistic-presenter.js';
 
 export const Mode = {
   DEFAULT: 'DEFAULT',
@@ -104,33 +105,36 @@ export default class MainPresenter {
     const filterPresenter = new FilterPresenter(this.#siteMainContainer, this.#filterModel, this.#dataModel);
     filterPresenter.init();
 
-    const filmsComponent = new FilmsView();
+    // const filmsComponent = new FilmsView();
 
     const footerStatsComponent = new FooterStatisticsView(this.films);
     render(this.#siteFooterContainer, footerStatsComponent, RenderPosition.BEFOREEND);
 
-    this.#renderFilmsContainer();
+    // this.#renderFilmsContainer();
 
-    const topRatedFilmListComponent = new TopRatedFilmsListView();
-    const topRatefilmListContainerComponent = new FilmsListContainerView();
-    render(filmsComponent, topRatedFilmListComponent, RenderPosition.BEFOREEND);
-    render(topRatedFilmListComponent, topRatefilmListContainerComponent, RenderPosition.BEFOREEND);
-    for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
-      const filmCard = new FilmCardView(this.films[i]);
-      render(topRatefilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
-    }
+    // const topRatedFilmListComponent = new TopRatedFilmsListView();
+    // const topRatefilmListContainerComponent = new FilmsListContainerView();
+    // render(filmsComponent, topRatedFilmListComponent, RenderPosition.BEFOREEND);
+    // render(topRatedFilmListComponent, topRatefilmListContainerComponent, RenderPosition.BEFOREEND);
+    // for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
+    //   const filmCard = new FilmCardView(this.films[i]);
+    //   render(topRatefilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
+    // }
 
-    const mostCommentedFilmListComponent = new MostCommentedFilmsListView();
-    const mostCommentedfilmListContainerComponent = new FilmsListContainerView();
-    render(filmsComponent, mostCommentedFilmListComponent, RenderPosition.BEFOREEND);
-    render(mostCommentedFilmListComponent, mostCommentedfilmListContainerComponent, RenderPosition.BEFOREEND);
-    for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
-      const filmCard = new FilmCardView(this.films[i]);
-      render(mostCommentedfilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
-    }
+    // const mostCommentedFilmListComponent = new MostCommentedFilmsListView();
+    // const mostCommentedfilmListContainerComponent = new FilmsListContainerView();
+    // render(filmsComponent, mostCommentedFilmListComponent, RenderPosition.BEFOREEND);
+    // render(mostCommentedFilmListComponent, mostCommentedfilmListContainerComponent, RenderPosition.BEFOREEND);
+    // for (let i = 0; i < EXTRA_FILM_COUNT; i++) {
+    //   const filmCard = new FilmCardView(this.films[i]);
+    //   render(mostCommentedfilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
+    // }
 
-    //const statsComponent = new StatsView();
-    //render(this.#siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
+    const statisticPresenter = new StatisticPresenter(this.#dataModel, this.#siteMainContainer);
+    statisticPresenter.init();
+
+    // const statsComponent = new StatsView();
+    // render(this.#siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
   }
 
   #renderHeaderProfile = () => {

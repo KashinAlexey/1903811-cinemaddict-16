@@ -55,4 +55,12 @@ export const SortType = {
   RATING: 'rating',
 };
 
+export const StatsFilterType = {
+  ALL: 'all-time',
+  TODAY: 'today',
+  WEEK: 'week',
+  MONTH: 'month',
+  YEAR: 'year',
+};
+
 export { RenderPosition, EXTRA_FILM_COUNT, SORTS };
