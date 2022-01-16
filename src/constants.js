@@ -38,7 +38,7 @@ const EXTRA_FILM_COUNT = 2;
 const SORTS = ['Sort by default', 'Sort by date', 'Sort by rating'];
 
 export const MenuItem = {
-  ALL: 'ALL',
+  DEFAULT: 'DEFAULT',
   STATS: 'Stats',
 };
 

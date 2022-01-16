@@ -8,7 +8,7 @@ import { RenderPosition } from '../constants.js';
 import SortView from '../views/sort-view.js';
 import { SortType } from '../constants.js';
 import FilmsView from '../views/films-view.js';
-import FooterStatisticsView from '../views/footer-statistics-view.js';
+//import FooterStatisticsView from '../views/footer-statistics-view.js';
 import FilmsListView from '../views/films-list-view.js';
 import ShowMoreButtonView from '../views/show-more-button-view.js';
 import FilmsListContainerView from '../views/film-list-container-view.js';
@@ -19,8 +19,8 @@ import FilmCardView from '../views/film-card-view.js';
 import FilmDetailsView from '../views/film-details-view.js';
 import CommentsView from '../views/comments-view.js';
 import { UserAction } from '../constants.js';
-import FilterPresenter from './filter-presenter.js';
-import FilterModel from '../model/filter-model.js';
+//import FilterPresenter from './filter-presenter.js';
+//import FilterModel from '../model/filter-model.js';
 import { FilterType } from '../constants.js';
 import { filter } from '../utils/filter.js';
 import NoFilmsView from '../views/no-films-view.js';
@@ -28,7 +28,7 @@ import { sortNumber } from '../utils/commons.js';
 import { sortDate } from '../utils/commons.js';
 
 //import StatsView from '../views/statistic-view.js';
-import StatisticPresenter from './statistic-presenter.js';
+//import StatisticPresenter from './statistic-presenter.js';
 
 export const Mode = {
   DEFAULT: 'DEFAULT',
@@ -63,8 +63,9 @@ export default class MainPresenter {
   #filmsComponent = null;
   #headerProfileComponent = null;
 
-  constructor(dataModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
+  constructor(dataModel, filterModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
+    this.#filterModel = filterModel;
     this.#siteHeaderContainer = siteHeaderContainer;
     this.#siteMainContainer = siteMainContainer;
     this.#siteFooterContainer = siteFooterContainer;
@@ -94,24 +95,17 @@ export default class MainPresenter {
   }
 
   init = () => {
-    this.#filterModel = new FilterModel();
     this.#dataModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
+  destroy = () => {
+    remove(this.#sortComponent);
+    remove(this.#filmsComponent);
+
+  }
+
   renderSite = () => {
-    this.#renderHeaderProfile();
-
-    const filterPresenter = new FilterPresenter(this.#siteMainContainer, this.#filterModel, this.#dataModel);
-    filterPresenter.init();
-
-    // const filmsComponent = new FilmsView();
-
-    const footerStatsComponent = new FooterStatisticsView(this.films);
-    render(this.#siteFooterContainer, footerStatsComponent, RenderPosition.BEFOREEND);
-
-    // this.#renderFilmsContainer();
-
     // const topRatedFilmListComponent = new TopRatedFilmsListView();
     // const topRatefilmListContainerComponent = new FilmsListContainerView();
     // render(filmsComponent, topRatedFilmListComponent, RenderPosition.BEFOREEND);
@@ -130,11 +124,8 @@ export default class MainPresenter {
     //   render(mostCommentedfilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
     // }
 
-    const statisticPresenter = new StatisticPresenter(this.#dataModel, this.#siteMainContainer);
-    statisticPresenter.init();
-
-    // const statsComponent = new StatsView();
-    // render(this.#siteMainContainer, statsComponent, RenderPosition.BEFOREEND);
+    // const statisticPresenter = new StatisticPresenter(this.#dataModel, this.#siteMainContainer);
+    // statisticPresenter.init();
   }
 
   #renderHeaderProfile = () => {
@@ -382,7 +373,8 @@ export default class MainPresenter {
   #handleModelEvent = (eventType, data) => {
     switch (eventType) {
       case DataEvent.INIT:
-        this.renderSite();
+        //this.renderSite();
+        this.#renderFilmsContainer();
         break;
       case DataEvent.GETED:
         this.#renderComments();

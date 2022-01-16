@@ -8,13 +8,15 @@ export default class FilterPresenter {
   #filterContainer = null;
   #filterModel = null;
   #filmsModel = null;
+  #callback = null;
 
   #filterComponent = null;
 
-  constructor(filterContainer, filterModel, filmsModel) {
+  constructor(filterContainer, filterModel, filmsModel, callback) {
     this.#filterContainer = filterContainer;
     this.#filterModel = filterModel;
     this.#filmsModel = filmsModel;
+    this.#callback = callback;
   }
 
   get filters() {
@@ -50,6 +52,7 @@ export default class FilterPresenter {
 
     this.#filterComponent = new NavigationView(filters, this.#filterModel.filter);
     this.#filterComponent.setMenuClickHandler(this.#handleFilterTypeChange);
+    this.#filterComponent.setStatsClickHandler(this.#callback);
 
     this.#filmsModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);

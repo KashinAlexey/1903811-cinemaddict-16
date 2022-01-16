@@ -88,6 +88,10 @@ export default class StatisticPresenter {
     this.#renderChart(statisticCtx, labels, values);
   }
 
+  destroy = () => {
+    remove(this.#statsComponent);
+  }
+
   #renderChart = (Ctx, labels, values) => new Chart(Ctx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',

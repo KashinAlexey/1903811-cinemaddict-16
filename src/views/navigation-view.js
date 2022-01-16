@@ -43,7 +43,15 @@ export default class NavigationView extends AbstractView {
 
   setMenuClickHandler = (callback) => {
     this._callback.menuClick = callback;
-    this.element.addEventListener('click', this.#menuClickHandler);
+    const filterButtons = this.element.querySelectorAll('.main-navigation__item');
+    for (const filterButton of filterButtons) {
+      filterButton.addEventListener('click', this.#menuClickHandler);
+    }
+  }
+
+  setStatsClickHandler = (callback) => {
+    this._callback.statsClick = callback;
+    this.element.addEventListener('click', this.#statsClickHandler);
   }
 
   #menuClickHandler = (evt) => {
@@ -52,5 +60,13 @@ export default class NavigationView extends AbstractView {
     }
     evt.preventDefault();
     this._callback.menuClick(evt.target.dataset.mainNavigationType);
+  }
+
+  #statsClickHandler = (evt) => {
+    if (evt.target.tagName !== 'A') {
+      return;
+    }
+    evt.preventDefault();
+    this._callback.statsClick(evt.target.dataset.mainNavigationType);
   }
 }
