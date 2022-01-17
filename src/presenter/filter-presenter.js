@@ -51,7 +51,7 @@ export default class FilterPresenter {
     const prevFilterComponent = this.#filterComponent;
 
     this.#filterComponent = new NavigationView(filters, this.#filterModel.filter);
-    this.#filterComponent.setMenuClickHandler(this.#handleFilterTypeChange);
+    this.#filterComponent.setFilterChangeHandler(this.#handleFilterTypeChange);
     this.#filterComponent.setStatsClickHandler(this.#callback);
 
     this.#filmsModel.addObserver(this.#handleModelEvent);

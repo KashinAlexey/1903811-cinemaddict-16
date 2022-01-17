@@ -41,25 +41,26 @@ export default class NavigationView extends AbstractView {
     item.classList.toggle('main-navigation__item--active');
   }
 
-  setMenuClickHandler = (callback) => {
-    this._callback.menuClick = callback;
+  setFilterChangeHandler = (callback) => {
+    this._callback.filterChange = callback;
     const filterButtons = this.element.querySelectorAll('.main-navigation__item');
     for (const filterButton of filterButtons) {
-      filterButton.addEventListener('click', this.#menuClickHandler);
+      filterButton.addEventListener('click', this.#filterChangeHandler);
+      filterButton.addEventListener('click', this.#statsClickHandler);
     }
   }
 
   setStatsClickHandler = (callback) => {
     this._callback.statsClick = callback;
-    this.element.addEventListener('click', this.#statsClickHandler);
+    this.element.querySelector('.main-navigation__additional').addEventListener('click', this.#statsClickHandler);
   }
 
-  #menuClickHandler = (evt) => {
+  #filterChangeHandler = (evt) => {
     if (evt.target.tagName !== 'A' && evt.target.tagName !== 'SPAN') {
       return;
     }
     evt.preventDefault();
-    this._callback.menuClick(evt.target.dataset.mainNavigationType);
+    this._callback.filterChange(evt.target.dataset.mainNavigationType);
   }
 
   #statsClickHandler = (evt) => {
