@@ -7,7 +7,7 @@ import { MenuItem } from './constants.js';
 import StatisticPresenter from './presenter/statistic-presenter.js';
 import FilterModel from './model/filter-model.js';
 import FilterPresenter from './presenter/filter-presenter.js';
-import { render } from './utils/render.js';
+import { remove, render } from './utils/render.js';
 import FooterStatisticsView from './views/footer-statistics-view.js';
 import { RenderPosition } from './constants.js';
 
@@ -49,8 +49,13 @@ const filterPresenter = new FilterPresenter(siteMainElement, filterModel, dataMo
 
 filterPresenter.init();
 mainPresenter.init();
+
+let footerStatsComponent = new FooterStatisticsView(dataModel.films);
+render(siteFooterElement, footerStatsComponent, RenderPosition.BEFOREEND);
+
 dataModel.init().finally(() => {
-  const footerStatsComponent = new FooterStatisticsView(dataModel.films);
+  remove(footerStatsComponent);
+  footerStatsComponent = new FooterStatisticsView(dataModel.films);
   render(siteFooterElement, footerStatsComponent, RenderPosition.BEFOREEND);
 });
 
