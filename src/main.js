@@ -22,8 +22,15 @@ const filterModel = new FilterModel();
 const mainPresenter = new MainPresenter(dataModel, filterModel, siteHeaderElement, siteMainElement, siteFooterElement, siteBodyElement);
 
 let statisticPresenter = null;
+let currentMenu = null;
 
 const handleSiteMenuClick = (menuItem) => {
+  if (currentMenu === menuItem) {
+    return;
+  }
+
+  currentMenu = menuItem;
+
   switch (menuItem) {
     case MenuItem.STATS:
       mainPresenter.destroy();
@@ -31,8 +38,9 @@ const handleSiteMenuClick = (menuItem) => {
       statisticPresenter.init();
       break;
     default:
-      statisticPresenter.destroy();
-      mainPresenter.init();
+      if (statisticPresenter) {
+        statisticPresenter.destroy();
+      }
       break;
   }
 };

@@ -15,7 +15,8 @@ const createMainNavigationTemplate = (filterItems, currentFilterType) => (`<nav 
       </a>`).join('')}
     </div>
     <a href="#stats"
-      class="main-navigation__additional"
+      class="main-navigation__additional
+      ${currentFilterType === MenuItem.STATS ? 'main-navigation__navigation__additional--active' : ''}"
       data-main-navigation-type="${MenuItem.STATS}">
       Stats
     </a>
@@ -36,9 +37,15 @@ export default class NavigationView extends AbstractView {
     return createMainNavigationTemplate(this.#filters, this.#currentFilter);
   }
 
-  setMenuItem = (menuItem) => {
-    const item = this.element.querySelector(`[data-main-navigation-type="${menuItem}"]`);
-    item.classList.toggle('main-navigation__item--active');
+  setMenuItem = () => {
+    const itms = this.element.querySelectorAll('a');
+    for (const itm of itms) {
+      itm.classList.remove('main-navigation__item--active');
+    }
+
+    const item = this.element.querySelector(`[data-main-navigation-type="${MenuItem.STATS}"]`);
+    item.classList.toggle('main-navigation__additional--active');
+    this.#currentFilter = MenuItem.STATS;
   }
 
   setFilterChangeHandler = (callback) => {
@@ -67,6 +74,7 @@ export default class NavigationView extends AbstractView {
     if (evt.target.tagName !== 'A') {
       return;
     }
+    this.setMenuItem();
     evt.preventDefault();
     this._callback.statsClick(evt.target.dataset.mainNavigationType);
   }
