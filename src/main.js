@@ -33,6 +33,7 @@ const handleSiteMenuClick = (menuItem) => {
 
   switch (menuItem) {
     case MenuItem.STATS:
+      filterModel.setFilter(null, MenuItem.STATS);
       mainPresenter.destroy();
       statisticPresenter = new StatisticPresenter(dataModel, siteMainElement);
       statisticPresenter.init();

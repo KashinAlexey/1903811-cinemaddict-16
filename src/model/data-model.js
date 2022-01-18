@@ -60,7 +60,7 @@ export default class DataModel extends AbstractObservable {
       ];
       this._notify(DataEvent.DELETED);
     } catch(err) {
-      this._notify(DataEvent.ERROR);
+      throw new Error('Can\'t deleted data');
     }
   }
 
@@ -70,7 +70,7 @@ export default class DataModel extends AbstractObservable {
       this.#comments = response.comments.map(this.#adaptCommentsToClient);
       this._notify(DataEvent.ADDED);
     } catch(err) {
-      this._notify(DataEvent.ERROR);
+      throw new Error('Can\'t added data');
     }
   }
 

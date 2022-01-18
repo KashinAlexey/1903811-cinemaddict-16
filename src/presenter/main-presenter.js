@@ -360,25 +360,23 @@ export default class MainPresenter {
   #handleViewAction = async (actionType, update) => {
     switch (actionType) {
       case UserAction.DELETE_DATA:
+        this.#commentsComponent.updateComment(update.id, {isDisabled: true, isDeleting: true});
         try {
           await this.#dataModel.deleteComment(update.id);
         } catch(err) {
-          ///console.log('err');
+          this.#commentsComponent.setAborting(update.id);
         }
         break;
       case UserAction.ADD_DATA:
         try {
+          this.#commentsComponent.updateComment(null, {isDisabled: true});
           await this.#dataModel.addComment(this.#film.id, update);
         } catch(err) {
-          ///console.log('err');
+          this.#commentsComponent.setAborting(null);
         }
         break;
       case UserAction.UPDATE_DATA:
-        try {
-          await this.#dataModel.updateFilm(update);
-        } catch(err) {
-          ///console.log('err');
-        }
+        await this.#dataModel.updateFilm(update);
         break;
     }
   }

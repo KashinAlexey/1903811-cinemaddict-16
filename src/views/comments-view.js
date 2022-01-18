@@ -1,4 +1,4 @@
-import AbstractView from './abstract-view.js';
+import SmartView from '../views/smart-view.js';
 import he from 'he';
 
 const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
@@ -37,23 +37,24 @@ const createEmojItmImage = (emoji) => (`
   />`
 );
 
-const createFilmDetailsEmojiItem = () => (
+const createFilmDetailsEmojiItem = (isDisabled) => (
   EMOJIS.map((emoji) => `<input
     class="film-details__emoji-item visually-hidden"
     name="comment-emoji"
     type="radio"
     id="emoji-${emoji}"
     value="${emoji}"
+    ${isDisabled ? 'disabled' : ''}
   />
   <label
     class="film-details__emoji-label"
     for="emoji-${emoji}">
-    ${createEmojItmImage(emoji)}
+    ${createEmojItmImage(emoji, isDisabled)}
   </label>`).join('')
 );
 
-const createFilmDetailsComment = (commentItm) => {
-  const { id, author, emotion, comment, date } = commentItm;
+const createFilmDetailsComment = (commentItm, isDisabled) => {
+  const { id, author, emotion, comment, date, isDeleting } = commentItm;
 
   return `<li class="film-details__comment" id="${id}">
     <span class="film-details__comment-emoji">
@@ -74,17 +75,18 @@ const createFilmDetailsComment = (commentItm) => {
         <span class="film-details__comment-day">
           ${formatDate(date, dateFormat)}
         </span>
-        <button class="film-details__comment-delete">
-          Delete
+        <button class="film-details__comment-delete"
+        ${isDisabled ? 'disabled' : ''}>
+        ${isDeleting ? 'Deleting...' : 'Delete'}
         </button>
       </p>
     </div>
   </li>`;
 };
 
-const createFilmDetailsComments = (comments) => {
+const createFilmDetailsComments = (comments, isDisabled) => {
 
-  const commentsTemplate = comments.map((comment) => createFilmDetailsComment(comment)).join('');
+  const commentsTemplate = comments.map((comment) => createFilmDetailsComment(comment, isDisabled)).join('');
 
   return `<ul class="film-details__comments-list">
     ${commentsTemplate}
@@ -93,6 +95,7 @@ const createFilmDetailsComments = (comments) => {
 
 const createFilmDetailsCommentsTemplate = (comments) => {
   const commentsCount = comments.length;
+  const { isDisabled } = comments;
 
   return `<div class="film-details__bottom-container">
     <section class="film-details__comments-wrap">
@@ -103,7 +106,7 @@ const createFilmDetailsCommentsTemplate = (comments) => {
         </span>
       </h3>
 
-      ${createFilmDetailsComments(comments)}
+      ${createFilmDetailsComments(comments, isDisabled)}
 
       <div class="film-details__new-comment">
         <div class="film-details__add-emoji-label">
@@ -116,26 +119,27 @@ const createFilmDetailsCommentsTemplate = (comments) => {
             class="film-details__comment-input"
             placeholder="Select reaction below and write comment here"
             name="comment"
+            ${isDisabled ? 'disabled' : ''}
           ></textarea>
         </label>
 
         <div class="film-details__emoji-list">
-          ${createFilmDetailsEmojiItem()}
+          ${createFilmDetailsEmojiItem(isDisabled)}
         </div>
       </div>
     </section>
   </div>`;
 };
 
-export default class CommentsView extends AbstractView {
-  #comments = null;
+export default class CommentsView extends SmartView {
   #userComment = null;
   #textAreaElement = null;
   #userEmodjiElement = null;
+  _data = null;
 
   constructor(comments) {
     super();
-    this.#comments = comments;
+    this._data = CommentsView.parseCommentsToData(comments);
     this.#userComment = Object.assign({}, emptyComment);
     this.#setEmojiClickHandler();
     this.#textAreaElement = this.element.querySelector('.film-details__comment-input');
@@ -143,7 +147,57 @@ export default class CommentsView extends AbstractView {
   }
 
   get template() {
-    return createFilmDetailsCommentsTemplate(this.#comments);
+    return createFilmDetailsCommentsTemplate(this._data);
+  }
+
+  static parseCommentsToData = (comments) => {
+    const parsedComments = comments.map((comment) => {
+      const obj = Object.assign({},comment);
+      obj.isDisabled = false;
+      obj.isDeleting = false;
+      return obj;
+    });
+
+    parsedComments.sDisabled = false;
+
+    return parsedComments;
+  };
+
+  restoreHandlers = () => {
+    this.setDeleteClickHandler(this._callback.deleteClick);
+    this.#setEmojiClickHandler(this._callback.emojiClick);
+  }
+
+  setAborting = (id) => {
+    this.shake(() => this.updateComment(id, {isDisabled: false,isDeleting: false,}));
+  }
+
+  updateComment = (id, update) => {
+    if (!update) {
+      return;
+    }
+
+    const { isDisabled, isDeleting } = update;
+
+    if (id) {
+      const index = this._data.findIndex((data) => data.id === id);
+
+      if (index === -1) {
+        return;
+      }
+
+      const updatedData = {...this._data[index], isDeleting: isDeleting};
+
+      this._data = [
+        ...this._data.slice(0, index),
+        updatedData,
+        ...this._data.slice(index + 1),
+      ];
+    }
+
+    this._data.isDisabled = isDisabled;
+
+    this.updateElement();
   }
 
   #checkValidity = () => (
@@ -174,6 +228,7 @@ export default class CommentsView extends AbstractView {
     if (evt.ctrlKey && evt.key === 'Enter') {
       this.#ctrlEnterKeydownHandler(evt);
     }
+    this.#textAreaElement = this.element.querySelector('.film-details__comment-input');
 
     this.#userComment.comment = he.encode(this.#textAreaElement.value);
   }
@@ -184,6 +239,7 @@ export default class CommentsView extends AbstractView {
   }
 
   #emojiClickHandler = (evt) => {
+    this.#userEmodjiElement = this.element.querySelector('.film-details__add-emoji-label').querySelector('img');
     evt.preventDefault();
     const emoji = evt.currentTarget.value;
     this.#userEmodjiElement.src = `images/emoji/${emoji}.png`;
