@@ -45,8 +45,9 @@ export default class DataModel extends AbstractObservable {
     }
   }
 
-  deleteComment = async (id) => {
+  deleteComment = async (id, filmId) => {
     const index = this.#comments.findIndex((comment) => comment.id === id);
+    const filmIndex = this.#films.findIndex((film) => film.id === filmId);
 
     if (index === -1) {
       throw new Error('Can\'t delete unexisting data');
@@ -58,6 +59,8 @@ export default class DataModel extends AbstractObservable {
         ...this.#comments.slice(0, index),
         ...this.#comments.slice(index + 1),
       ];
+      const update = this.#comments.map((_comment) => _comment.id);
+      this.#films[filmIndex].comments = update;
       this._notify(DataEvent.DELETED);
     } catch(err) {
       throw new Error('Can\'t deleted data');
@@ -65,9 +68,17 @@ export default class DataModel extends AbstractObservable {
   }
 
   addComment = async (id, comment) => {
+    const index = this.#films.findIndex((film) => film.id === id);
+
+    if (index === -1) {
+      throw new Error('Can\'t update unexisting data');
+    }
+
     try {
       const response = await this.#apiService.addData(Url.COMMENTS, id, comment);
       this.#comments = response.comments.map(this.#adaptCommentsToClient);
+      const update = this.#comments.map((_comment) => _comment.id);
+      this.#films[index].comments = update;
       this._notify(DataEvent.ADDED);
     } catch(err) {
       throw new Error('Can\'t added data');
