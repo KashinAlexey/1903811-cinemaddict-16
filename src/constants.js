@@ -1,13 +1,14 @@
 export const SHAKE_ANIMATION_TIMEOUT = 600;
+export const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
-const RenderPosition = {
+export const RenderPosition = {
   BEFOREBEGIN: 'beforebegin',
   AFTERBEGIN: 'afterbegin',
   BEFOREEND: 'beforeend',
   AFTEREND: 'afterend',
 };
 
-export const AUTHORIZATION = 'Basic pouigwduyqiyfivwv9653';
+export const AUTHORIZATION = 'Basic pouihdsuhwduyqiyfivwv9653';
 export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict';
 
 export const Url = {
@@ -28,14 +29,13 @@ export const DataEvent = {
   ADDED: 'ADDED',
   UPDATED: 'UPDATED',
   DELETED: 'DELETED',
-  ERROR: 'ERROR',
+  ERROR_FILM: 'ERROR FILM',
+  ERROR_COMMENTS: 'ERROR COMMENTS',
   FILTERED: 'FILTERED',
 };
 
-export const FILM_COUNT = 5;
-const EXTRA_FILM_COUNT = 2;
-
-const SORTS = ['Sort by default', 'Sort by date', 'Sort by rating'];
+export const FILM_COUNT_PER_STEP = 5;
+export const EXTRA_FILM_COUNT = 2;
 
 export const MenuItem = {
   DEFAULT: 'DEFAULT',
@@ -63,4 +63,7 @@ export const StatsFilterType = {
   YEAR: 'year',
 };
 
-export { RenderPosition, EXTRA_FILM_COUNT, SORTS };
+export const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};

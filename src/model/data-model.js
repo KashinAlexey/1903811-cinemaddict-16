@@ -2,7 +2,8 @@ import AbstractObservable from '../utils/abstract-observable.js';
 import { adaptToClient } from '../service/adapter-client.js';
 import { adaptToServer } from '../service/adapter-server.js';
 import { adaptCommentsToClient } from '../service/adapter-client.js';
-import { DataEvent, Url } from '../constants.js';
+import { DataEvent } from '../constants.js';
+import { Url } from '../constants.js';
 
 export default class DataModel extends AbstractObservable {
   #films = [];
@@ -31,7 +32,7 @@ export default class DataModel extends AbstractObservable {
       this.#films = films.map(this.#adaptToClient);
       this._notify(DataEvent.INIT);
     } catch(err) {
-      this._notify(DataEvent.ERROR);
+      this._notify(DataEvent.ERROR_FILM);
     }
   }
 
@@ -41,7 +42,7 @@ export default class DataModel extends AbstractObservable {
       this.#comments = comments.map(this.#adaptCommentsToClient);
       this._notify(DataEvent.GETED);
     } catch(err) {
-      this._notify(DataEvent.ERROR);
+      this._notify(DataEvent.ERROR_COMMENTS);
     }
   }
 

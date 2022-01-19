@@ -1,8 +1,11 @@
-import NavigationView from '../views/navigation-view.js';
-import { render, replace, remove } from '../utils/render.js';
-import { RenderPosition } from '../constants.js';
+import { DataEvent } from '../constants.js';
 import { filter } from '../utils/filter.js';
-import { FilterType, DataEvent } from '../constants.js';
+import { FilterType } from '../constants.js';
+import NavigationView from '../views/navigation-view.js';
+import { render } from '../utils/render.js';
+import { replace } from '../utils/render.js';
+import { remove } from '../utils/render.js';
+import { RenderPosition } from '../constants.js';
 
 export default class FilterPresenter {
   #filterContainer = null;
@@ -64,16 +67,6 @@ export default class FilterPresenter {
 
     replace(this.#filterComponent, prevFilterComponent);
     remove(prevFilterComponent);
-  }
-
-  destroy = () => {
-    remove(this.#filterComponent);
-    this.#filterComponent = null;
-
-    this.#filmsModel.removeObserver(this.#handleModelEvent);
-    this.#filterModel.removeObserver(this.#handleModelEvent);
-
-    this.#filterModel.setFilter(DataEvent.FILTERED, FilterType.ALL);
   }
 
   #handleModelEvent = () => {

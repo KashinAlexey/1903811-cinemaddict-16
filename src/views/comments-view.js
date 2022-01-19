@@ -1,31 +1,11 @@
-import SmartView from '../views/smart-view.js';
+import { EMOJIS } from '../constants.js';
 import he from 'he';
-
-const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
-
-const dateFormat = 'yyyy/mm/dd h:m';
+import SmartView from '../views/smart-view.js';
+import { timeSince } from '../utils/commons.js';
 
 const emptyComment = {
   emotion: null,
   comment: '',
-};
-
-const formatDate = (date, str = 'yyyy/mm/dd h:m') => {
-  const yyyy = `${date.getFullYear()}`;
-  const mm = date.getMonth() >= 10 ? `${+date.getMonth() + 1}` : `0${+date.getMonth() + 1}`;
-  const dd = date.getDate() >= 10 ? `${date.getDate()}` : `0${date.getDate()}`;
-  const m = date.getMinutes() >= 10 ? `${date.getMinutes()}` : `0${date.getMinutes()}`;
-  const h = date.getHours() >= 10 ? `${date.getHours()}` : `0${date.getHours()}`;
-  const s = date.getSeconds() >= 10 ? `${date.getSeconds()}` : `0${date.getSeconds()}`;
-
-  str = str.includes('yyyy') ? str.replace('yyyy', yyyy) : str;
-  str = str.includes('mm') ? str.replace('mm', mm) : str;
-  str = str.includes('dd') ? str.replace('dd', dd) : str;
-  str = str.includes('m') ? str.replace('m', m) : str;
-  str = str.includes('h') ? str.replace('h', h) : str;
-  str = str.includes('s') ? str.replace('s', s) : str;
-
-  return str;
 };
 
 const createEmojItmImage = (emoji) => (`
@@ -73,7 +53,7 @@ const createFilmDetailsComment = (commentItm, isDisabled) => {
           ${author}
         </span>
         <span class="film-details__comment-day">
-          ${formatDate(date, dateFormat)}
+          ${timeSince(date)}
         </span>
         <button class="film-details__comment-delete"
         ${isDisabled ? 'disabled' : ''}>
@@ -85,7 +65,6 @@ const createFilmDetailsComment = (commentItm, isDisabled) => {
 };
 
 const createFilmDetailsComments = (comments, isDisabled) => {
-
   const commentsTemplate = comments.map((comment) => createFilmDetailsComment(comment, isDisabled)).join('');
 
   return `<ul class="film-details__comments-list">
@@ -159,7 +138,6 @@ export default class CommentsView extends SmartView {
     });
 
     parsedComments.sDisabled = false;
-
     return parsedComments;
   };
 
@@ -187,7 +165,6 @@ export default class CommentsView extends SmartView {
       }
 
       const updatedData = {...this._data[index], isDeleting: isDeleting};
-
       this._data = [
         ...this._data.slice(0, index),
         updatedData,
@@ -229,7 +206,6 @@ export default class CommentsView extends SmartView {
       this.#ctrlEnterKeydownHandler(evt);
     }
     this.#textAreaElement = this.element.querySelector('.film-details__comment-input');
-
     this.#userComment.comment = he.encode(this.#textAreaElement.value);
   }
 

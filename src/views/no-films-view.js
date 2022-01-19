@@ -27,10 +27,3 @@ export default class NoFilmsView extends AbstractView {
     return createNoFilmsTemplate(this._data);
   }
 }
-
-// <!--
-//     При загрузке данных
-//       * Loading...//
-//      Значение в зависимости от блока
-//       * All movies. Upcoming, Top rated, Most commented
-//   -->

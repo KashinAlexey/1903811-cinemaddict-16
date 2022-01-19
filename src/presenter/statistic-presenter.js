@@ -6,7 +6,7 @@ import { remove } from '../utils/render.js';
 import { sortNumber } from '../utils/commons.js';
 import { StatsFilterType } from '../constants.js';
 
-import StatsView from '../views/statistic-view.js';
+import StatsView from '../views/stats-view.js';
 
 export const statsFilter = {
   [StatsFilterType.ALL]: (films) => films.filter((film) => film.userDetails.alreadyWatched),

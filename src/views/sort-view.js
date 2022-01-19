@@ -3,18 +3,32 @@ import { SortType } from '../constants.js';
 
 const createSortTemplate = (currentSortType) => (
   `<ul class="sort">
-    ${Object.entries(SortType).map(([name, type]) => `<li>
-    <a href="#${type}"
-      id="sort-${name}"
-      class="sort__button
-      ${type === currentSortType ? 'sort__button--active' : ''}"
-      data-sort-type="${type}">
-      Sort by ${type}
-    </a>
-    </li>`).join('')}
+    <li>
+      <a href="#"
+        class="sort__button
+        ${SortType.DEFAULT === currentSortType ? 'sort__button--active' : ''}"
+        data-sort-type="${SortType.DEFAULT}">
+        Sort by default
+      </a>
+    </li>
+    <li>
+      <a href="#"
+        class="sort__button
+        ${SortType.DATE === currentSortType ? 'sort__button--active' : ''}"
+        data-sort-type="${SortType.DATE}">
+        Sort by date
+      </a>
+    </li>
+    <li>
+      <a href="#"
+        class="sort__button
+        ${SortType.RATING === currentSortType ? 'sort__button--active' : ''}"
+        data-sort-type="${SortType.RATING}">
+        Sort by rating
+      </a>
+    </li>
   </ul>`
 );
-
 export default class SortView extends AbstractView {
   #currentSortType = null;
 

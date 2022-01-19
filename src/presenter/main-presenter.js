@@ -1,42 +1,32 @@
+import CommentsView from '../views/comments-view.js';
 import { DataEvent } from '../constants.js';
+import { EXTRA_FILM_COUNT } from '../constants.js';
+import ErrorView from '../views/error-view.js';
+import ErrorCommentsView from '../views/error-comments-view.js';
+import FilmsView from '../views/films-view.js';
+import FilmsListView from '../views/films-list-view.js';
+import FilmCardView from '../views/film-card-view.js';
+import { FilterType } from '../constants.js';
+import { filter } from '../utils/filter.js';
+import FilmDetailsView from '../views/film-details-view.js';
+import { FILM_COUNT_PER_STEP } from '../constants.js';
+import FilmsListContainerView from '../views/film-list-container-view.js';
+import HeaderProfileView from '../views/header-profile-view.js';
+import LoadingView from '../views/loading-view.js';
+import MostCommentedFilmsListView from '../views/most-commented-film-list-view.js';
+import { Mode } from '../constants.js';
+import NoFilmsView from '../views/no-films-view.js';
 import { remove } from '../utils/render.js';
 import { render } from '../utils/render.js';
 import { replace } from '../utils/render.js';
-import HeaderProfileView from '../views/header-profile-view.js';
 import { RenderPosition } from '../constants.js';
-//import NavigationView from '../views/navigation-view.js';
-import SortView from '../views/sort-view.js';
-import { SortType } from '../constants.js';
-import FilmsView from '../views/films-view.js';
-//import FooterStatisticsView from '../views/footer-statistics-view.js';
-import FilmsListView from '../views/films-list-view.js';
-import ShowMoreButtonView from '../views/show-more-button-view.js';
-import FilmsListContainerView from '../views/film-list-container-view.js';
-import FilmCardView from '../views/film-card-view.js';
-import { EXTRA_FILM_COUNT } from '../constants.js';
-import TopRatedFilmsListView from '../views/top-rated-film-list-view.js';
-import MostCommentedFilmsListView from '../views/most-commented-film-list-view.js';
-import FilmDetailsView from '../views/film-details-view.js';
-import CommentsView from '../views/comments-view.js';
-import { UserAction } from '../constants.js';
-//import FilterPresenter from './filter-presenter.js';
-//import FilterModel from '../model/filter-model.js';
-import { FilterType } from '../constants.js';
-import { filter } from '../utils/filter.js';
-import NoFilmsView from '../views/no-films-view.js';
 import { sortNumber } from '../utils/commons.js';
 import { sortDate } from '../utils/commons.js';
-import LoadingView from '../views/loading-view.js';
-
-//import StatsView from '../views/statistic-view.js';
-//import StatisticPresenter from './statistic-presenter.js';
-
-export const Mode = {
-  DEFAULT: 'DEFAULT',
-  EDITING: 'EDITING',
-};
-
-const FILM_COUNT_PER_STEP = 5;
+import SortView from '../views/sort-view.js';
+import { SortType } from '../constants.js';
+import ShowMoreButtonView from '../views/show-more-button-view.js';
+import TopRatedFilmsListView from '../views/top-rated-film-list-view.js';
+import { UserAction } from '../constants.js';
 
 export default class MainPresenter {
   #film = null;
@@ -47,12 +37,12 @@ export default class MainPresenter {
   #filterType = FilterType.ALL;
   #mode = Mode.DEFAULT;
   #isLoading = true;
+  #isErrorComments = false;
 
   #dataModel = null;
   #filterModel = null;
   #siteHeaderContainer = null;
   #siteMainContainer = null;
-  #siteFooterContainer = null;
   #siteBodyContainer = null;
 
   #showMoreButtonComponent = null;
@@ -65,13 +55,14 @@ export default class MainPresenter {
   #filmsComponent = null;
   #headerProfileComponent = null;
   #loadingComponent = null;
+  #errorComponent = null;
+  #errorCommentsComponent = null;
 
-  constructor(dataModel, filterModel, siteHeaderContainer, siteMainContainer, siteFooterContainer, siteBodyContainer) {
+  constructor(dataModel, filterModel, siteHeaderContainer, siteMainContainer, siteBodyContainer) {
     this.#dataModel = dataModel;
     this.#filterModel = filterModel;
     this.#siteHeaderContainer = siteHeaderContainer;
     this.#siteMainContainer = siteMainContainer;
-    this.#siteFooterContainer = siteFooterContainer;
     this.#siteBodyContainer = siteBodyContainer;
   }
 
@@ -187,7 +178,10 @@ export default class MainPresenter {
     this.#filmListContainerComponent = new FilmsListContainerView();
     render (this.#filmListComponent, this.#filmListContainerComponent, RenderPosition.BEFOREEND);
     this.#renderFilmList();
-    this.#renderSort();
+
+    if (this.films.length !== 0) {
+      this.#renderSort();
+    }
 
     this.#renderTopFilms();
     this.#renderCommentedFilms();
@@ -241,6 +235,16 @@ export default class MainPresenter {
   #renderLoading = () => {
     this.#loadingComponent = new LoadingView();
     render(this.#siteMainContainer, this.#loadingComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderError = () => {
+    this.#errorComponent = new ErrorView();
+    render(this.#siteMainContainer, this.#errorComponent, RenderPosition.BEFOREEND);
+  }
+
+  #renderErrorComments = () => {
+    this.#errorCommentsComponent = new ErrorCommentsView();
+    render(this.#popupComponent, this.#errorCommentsComponent, RenderPosition.BEFOREEND);
   }
 
   #renderSort = () => {
@@ -371,7 +375,9 @@ export default class MainPresenter {
       return;
     }
 
-    this.#commentsComponent.commentInputHandler(evt);
+    if (!this.#isErrorComments) {
+      this.#commentsComponent.commentInputHandler(evt);
+    }
   }
 
   #handlePopupCtrlEnterKeydown = (comment) => {
@@ -444,13 +450,18 @@ export default class MainPresenter {
         this.#clearFilmsContainer({resetRenderedTaskCount: false, resetSortType: false});
         this.#renderFilmsContainer();
         break;
-      case DataEvent.ERROR:
+      case DataEvent.ERROR_FILM:
+        remove(this.#loadingComponent);
+        this.#renderError();
+        break;
+      case DataEvent.ERROR_COMMENTS:
+        this.#renderErrorComments();
+        this.#isErrorComments = true;
         break;
       case DataEvent.FILTERED:
         this.#clearFilmsContainer({resetRenderedTaskCount: true, resetSortType: true});
         this.#renderFilmsContainer();
         break;
-
     }
   };
 }

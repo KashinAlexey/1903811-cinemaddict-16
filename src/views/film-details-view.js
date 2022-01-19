@@ -114,6 +114,7 @@ const createFilmDetailsTemplate = (film) => {
     </form>
   </section>`;
 };
+
 export default class FilmDetailsView extends AbstractView {
   #film = null;
 

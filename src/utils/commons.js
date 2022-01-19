@@ -13,7 +13,7 @@ export const updateRating = (films) => {
   return rating;
 };
 
-
+// Date format
 export const reformatRuntime = (runtime) => {
   let timeString;
 
@@ -28,22 +28,41 @@ export const reformatRuntime = (runtime) => {
   return timeString;
 };
 
-export const formatDate = (date, str = 'yyyy/mm/dd h:m') => {
-  const yyyy = `${date.getFullYear()}`;
-  const mm = date.getMonth() >= 10 ? `${+date.getMonth() + 1}` : `0${+date.getMonth() + 1}`;
-  const dd = date.getDate() >= 10 ? `${date.getDate()}` : `0${date.getDate()}`;
-  const m = date.getMinutes() >= 10 ? `${date.getMinutes()}` : `0${date.getMinutes()}`;
-  const h = date.getHours() >= 10 ? `${date.getHours()}` : `0${date.getHours()}`;
-  const s = date.getSeconds() >= 10 ? `${date.getSeconds()}` : `0${date.getSeconds()}`;
+export const timeSince = (date) => {
 
-  str = str.includes('yyyy') ? str.replace('yyyy', yyyy) : str;
-  str = str.includes('mm') ? str.replace('mm', mm) : str;
-  str = str.includes('dd') ? str.replace('dd', dd) : str;
-  str = str.includes('m') ? str.replace('m', m) : str;
-  str = str.includes('h') ? str.replace('h', h) : str;
-  str = str.includes('s') ? str.replace('s', s) : str;
+  const seconds = Math.floor((new Date() - date) / 1000);
 
-  return str;
+  let interval = Math.floor(seconds / 31536000);
+  if (interval >= 1) {
+    return `${interval} ${interval === 1 ? 'year' : 'years'} ago`;
+  }
+
+  interval = Math.floor(seconds / 2592000);
+  if (interval >= 1) {
+    return `${interval} ${interval === 1 ? 'month' : 'months'} ago`;
+  }
+
+  interval = Math.floor(seconds / 604800);
+  if (interval >= 1) {
+    return `${interval} ${interval === 1 ? 'week' : 'weeks'} ago`;
+  }
+
+  interval = Math.floor(seconds / 86400);
+  if (interval >= 1) {
+    return `${interval} ${interval === 1 ? 'day' : 'days'} ago`;
+  }
+
+  interval = Math.floor(seconds / 3600);
+  if (interval >= 1) {
+    return `${interval} ${interval === 1 ? 'hour' : 'hours'} ago`;
+  }
+
+  interval = Math.floor(seconds / 60);
+  if (interval >= 1) {
+    return 'few minutes ago';
+  }
+
+  return 'now';
 };
 
 // Compare functions in arr.sort(foo)
