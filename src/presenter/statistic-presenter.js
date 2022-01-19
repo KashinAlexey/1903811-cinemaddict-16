@@ -10,8 +10,8 @@ import StatsView from '../views/statistic-view.js';
 
 export const statsFilter = {
   [StatsFilterType.ALL]: (films) => films.filter((film) => film.userDetails.alreadyWatched),
-  [StatsFilterType.TODAY]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate === new Date()),
-  [StatsFilterType.WEEK]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate.getDay() === new Date().getDate() && film.userDetails.watchingDate.getFullYear() === new Date().getFullYear()),
+  [StatsFilterType.TODAY]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate.getDate() === new Date().getDate() && film.userDetails.watchingDate.getMonth() === new Date().getMonth() && film.userDetails.watchingDate.getFullYear() === new Date().getFullYear()),
+  [StatsFilterType.WEEK]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate.getDay() === new Date().getDay() && film.userDetails.watchingDate.getFullYear() === new Date().getFullYear()),
   [StatsFilterType.MONTH]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate.getMonth() === new Date().getMonth() && film.userDetails.watchingDate.getFullYear() === new Date().getFullYear()),
   [StatsFilterType.YEAR]: (films) => films.filter((film) => film.userDetails.alreadyWatched && film.userDetails.watchingDate.getFullYear() === new Date().getFullYear()),
 };
@@ -76,7 +76,7 @@ export default class StatisticPresenter {
     const topGenre = labels[0] || '-';
     const duration = getDuration(this.films);
 
-    this.#statsComponent = new StatsView(this.#filterType, duration, topGenre, watched);
+    this.#statsComponent = new StatsView(this.#filterType, duration, topGenre, watched, this.#filmsModel.films);
     render(this.#siteMainContainer, this.#statsComponent, RenderPosition.BEFOREEND);
 
     this.#statsComponent.setFilterTypeChangeHandler(this.#handlefilterTypeChange);

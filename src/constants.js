@@ -7,7 +7,7 @@ const RenderPosition = {
   AFTEREND: 'afterend',
 };
 
-export const AUTHORIZATION = 'Basic pouigwdbbhvwv9653';
+export const AUTHORIZATION = 'Basic pouigwduyqiyfivwv9653';
 export const END_POINT = 'https://16.ecmascript.pages.academy/cinemaddict';
 
 export const Url = {

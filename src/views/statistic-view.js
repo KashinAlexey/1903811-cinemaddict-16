@@ -1,4 +1,5 @@
 import AbstractView from './abstract-view.js';
+import { updateRating } from '../utils/commons.js';
 
 const STATISTIC_FILTERS = ['all-time', 'today', 'week', 'month', 'year'];
 
@@ -18,12 +19,14 @@ const createStatisticFiltersInputTemplate = (filterType) => (
   </label>`).join('')
 );
 
-const createStatisticTemplate = (filterType, duration, genre, watched) => (
+const createStatisticTemplate = (filterType, duration, genre, watched, films) => (
   `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">Movie buff</span>
+      <span class="statistic__rank-label">
+      ${updateRating(films) !== null ? `${updateRating(films)}` : '-'}
+      </span>
     </p>
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
@@ -81,9 +84,11 @@ export default class StatsView extends AbstractView {
   #duration = null;
   #genre = null;
   #watched = null;
+  #films = null;
 
-  constructor(filterType, duration, genre, watched) {
+  constructor(filterType, duration, genre, watched, films) {
     super();
+    this.#films = films;
     this.#filterType = filterType;
     this.#duration = duration;
     this.#genre = genre;
@@ -91,7 +96,7 @@ export default class StatsView extends AbstractView {
   }
 
   get template() {
-    return createStatisticTemplate(this.#filterType, this.#duration, this.#genre, this.#watched);
+    return createStatisticTemplate(this.#filterType, this.#duration, this.#genre, this.#watched, this.#films);
   }
 
   setFilterTypeChangeHandler = (callback) => {

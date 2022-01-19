@@ -118,6 +118,15 @@ export default class MainPresenter {
     remove(this.#filmsComponent);
   }
 
+  #renderHeaderProfile = () => {
+    if (this.#headerProfileComponent) {
+      remove(this.#headerProfileComponent);
+    }
+
+    this.#headerProfileComponent = new HeaderProfileView(this.#dataModel.films);
+    render(this.#siteHeaderContainer, this.#headerProfileComponent, RenderPosition.BEFOREEND);
+  }
+
   #renderTopFilms = () => {
     const isZeroRating = (this.films.filter((film) => film.filmInfo.totalRating === 0)).length;
 
@@ -158,15 +167,6 @@ export default class MainPresenter {
       filmCard.setWatchlistClickHandler(this.#handleWatchlistClick);
       render(mostCommentedfilmListContainerComponent, filmCard, RenderPosition.BEFOREEND);
     }
-  }
-
-  #renderHeaderProfile = () => {
-    if (this.#headerProfileComponent) {
-      remove(this.#headerProfileComponent);
-    }
-
-    this.#headerProfileComponent = new HeaderProfileView(this.films);
-    render(this.#siteHeaderContainer, this.#headerProfileComponent, RenderPosition.BEFOREEND);
   }
 
   #renderNoFilms = () => {
@@ -335,7 +335,8 @@ export default class MainPresenter {
 
   #handleWatchedClick = (film) => {
     let userDetails = Object.assign({}, film.userDetails);
-    userDetails = {...userDetails, alreadyWatched: !userDetails.alreadyWatched};
+    const watchingDate = !userDetails.alreadyWatched ? new Date() : null;
+    userDetails = {...userDetails, alreadyWatched: !userDetails.alreadyWatched, watchingDate: watchingDate};
     this.#handleViewAction(
       UserAction.UPDATE_DATA,
       {...film, userDetails});
