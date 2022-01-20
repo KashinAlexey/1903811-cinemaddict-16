@@ -65,9 +65,7 @@ export default class StatisticPresenter {
 
   get films() {
     const films = this.#filmsModel.films;
-    const filteredfilms = statsFilter[this.#filterType](films).slice();
-
-    return filteredfilms;
+    return statsFilter[this.#filterType](films).slice();
   }
 
   init = () => {
@@ -84,7 +82,8 @@ export default class StatisticPresenter {
     const statisticCtx = document.querySelector('.statistic__chart');
 
     const BAR_HEIGHT = 80;
-    statisticCtx.height = BAR_HEIGHT * 5;
+    const BAR_GAPS = 5;
+    statisticCtx.height = BAR_HEIGHT * BAR_GAPS;
     this.#renderChart(statisticCtx, labels, values);
   }
 
